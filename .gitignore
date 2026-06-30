@@ -33,6 +33,5 @@
 __pycache__/
 *.pyc
 
-CLAUDE.md
 .claude
 .wolf
