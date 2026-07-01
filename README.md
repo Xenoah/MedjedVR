@@ -64,7 +64,7 @@ m_EditorVersionWithRevision: 6000.5.1f1 (0d9463e84828)
 1. リポジトリを clone します。
 
    ```sh
-   git clone https://github.com/Xenoah/Basis_XenuyuVR.git
+   git clone https://github.com/Xenoah/XenuyuVR.git
    cd Basis_XenuyuVR
    ```
 
