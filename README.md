@@ -1,6 +1,7 @@
 # XenuyuVR
 
-[XenuyuVR](https://github.com/Xenoah/Basis_XenuyuVR) は、チル・ゲーム対応の VRSNS「ゼヌユVR」です。
+[XenuyuVR]
+Misskeyアカウントで入るVRSNS(https://github.com/Xenoah/Basis_XenuyuVR) は、チル・ゲーム対応の VRSNS「ゼヌユVR」です。
 
 ゆったり過ごせる空間づくりと、みんなで遊べるネットワーク体験の両方を大切にしながら、VR 上での交流、アバター表現、ワールド体験、ゲーム的なインタラクションを組み合わせていくことを目指しています。
 
