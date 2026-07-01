@@ -8,10 +8,20 @@ using static BasisNetworkCore.Serializable.SerializableBasis;
 
 namespace BasisNetworkCore
 {
+    /// <summary>
+    /// BasisネットワークIDデータベースの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisNetworkIDDatabase
     {
+        /// <summary>
+        /// Ushortネットワークデータベースを保持します。型は ConcurrentDictionary<string, ushort> で、関連処理から共有される値です。
+        /// </summary>
         public static ConcurrentDictionary<string, ushort> UshortNetworkDatabase = new ConcurrentDictionary<string, ushort>();
         private static int counter = -1; // 最初の increment が 0 になるよう -1 から始める。
+        /// <summary>
+        /// AddOrFindネットワークIDを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void AddOrFindNetworkID(NetPeer NetPeer, string UniqueStringID)
         {
             if (UshortNetworkDatabase.TryGetValue(UniqueStringID, out ushort Value)) // 基本的には起こらない想定。
@@ -66,6 +76,9 @@ namespace BasisNetworkCore
             }
         }
 
+        /// <summary>
+        /// GetAllネットワークIDを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static bool GetAllNetworkID(out List<ServerNetIDMessage> ServerUniqueIDMessages)
         {
             ServerUniqueIDMessages = new List<ServerNetIDMessage>();
@@ -81,6 +94,9 @@ namespace BasisNetworkCore
             int Count = ServerUniqueIDMessages.Count;
             return Count != 0;
         }
+        /// <summary>
+        /// RemoveUshortネットワークIDを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RemoveUshortNetworkID(ushort netID)
         {
             BNL.Log($"Attempting to remove NetID: {netID}");
@@ -103,6 +119,9 @@ namespace BasisNetworkCore
             }
         }
 
+        /// <summary>
+        /// Resetを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Reset()
         {
             BNL.Log("Resetting BasisNetworkIDDatabase...");

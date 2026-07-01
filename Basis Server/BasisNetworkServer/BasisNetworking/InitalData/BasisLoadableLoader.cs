@@ -5,8 +5,15 @@ using static SerializableBasis;
 
 namespace BasisNetworking.InitialData
 {
+    /// <summary>
+    /// BasisLoadableローダーの責務をまとめるクラスです。
+    /// InitalData領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisLoadableLoader
     {
+        /// <summary>
+        /// 読み込みXMLを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void LoadXML(string FolderName)
         {
             try
@@ -49,6 +56,9 @@ namespace BasisNetworking.InitialData
                 Console.WriteLine($"Error: {ex.Message}");
             }
         }
+        /// <summary>
+        /// GenerateUniqueIDを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string GenerateUniqueID()
         {
             Guid newGuid = Guid.NewGuid();  // Generate a new GUID
@@ -57,6 +67,9 @@ namespace BasisNetworking.InitialData
 
             return $"{guid}{utcDate}";
         }
+        /// <summary>
+        /// FromBasisLoadable設定を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static LocalLoadResource FromBasisLoadableConfiguration(BasisLoadableConfiguration config)
         {
             return new LocalLoadResource
@@ -80,6 +93,9 @@ namespace BasisNetworking.InitialData
                 IsAdminLocked = true,
             };
         }
+        /// <summary>
+        /// exampleXmlを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string exampleXml = @"<BasisLoadableConfiguration>
     <!-- Mode of the configuration -->
     <Mode>0</Mode>

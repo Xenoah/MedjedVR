@@ -5,32 +5,89 @@ using System.Threading.Tasks;
 
 namespace Basis.Network.Core
 {
+    /// <summary>
+    /// サーバーProbeResultの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class ServerProbeResult
     {
+        /// <summary>
+        /// Reachableを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool Reachable;
+        /// <summary>
+        /// エラーを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Error;
+        /// <summary>
+        /// TimedOutを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool TimedOut;
+        /// <summary>
+        /// Onlineを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public ushort Online;
+        /// <summary>
+        /// Maxを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public ushort Max;
+        /// <summary>
+        /// ProtocolVersionを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public ushort ProtocolVersion;
+        /// <summary>
+        /// Nameを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Name;
+        /// <summary>
+        /// Motdを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Motd;
+        /// <summary>
+        /// RoundTripMsを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int RoundTripMs;
+        /// <summary>
+        /// Extrasを保持します。型は Dictionary<string, string> で、関連処理から共有される値です。
+        /// </summary>
         public Dictionary<string, string> Extras = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 
     public delegate Task<ServerProbeResult> StackProbeDelegate(ConnectionTarget target, int timeoutMs, CancellationToken ct);
     public delegate IPeerIntroducer PeerIntroducerFactory(NetManager activeManager);
 
+    /// <summary>
+    /// BasisネットワークStackRegistryの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisNetworkStackRegistry
     {
+        /// <summary>
+        /// LiteNetLibIdを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string LiteNetLibId = "litenetlib";
+        /// <summary>
+        /// DefaultIdを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string DefaultId = LiteNetLibId;
 
+        /// <summary>
+        /// StackInfoの責務をまとめる構造体です。
+        /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public readonly struct StackInfo
         {
+            /// <summary>
+            /// Idを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public readonly string Id;
+            /// <summary>
+            /// DisplayNameを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public readonly string DisplayName;
+            /// <summary>
+            /// StackInfoを生成し、利用に必要な初期状態を設定します。
+            /// </summary>
             public StackInfo(string id, string displayName)
             {
                 Id = id;
@@ -40,14 +97,39 @@ namespace Basis.Network.Core
 
         public delegate NetManager NetManagerFactory(EventBasedNetListener listener, Configuration configuration);
 
+        /// <summary>
+        /// Slotの責務をまとめるクラスです。
+        /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private sealed class Slot
         {
+            /// <summary>
+            /// Idを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public string Id;
+            /// <summary>
+            /// DisplayNameを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public string DisplayName;
+            /// <summary>
+            /// Factoryを保持します。型は NetManagerFactory で、関連処理から共有される値です。
+            /// </summary>
             public NetManagerFactory Factory;
+            /// <summary>
+            /// Parserを保持します。型は IConnectionTargetParser で、関連処理から共有される値です。
+            /// </summary>
             public IConnectionTargetParser Parser;
+            /// <summary>
+            /// Probeを保持します。型は StackProbeDelegate で、関連処理から共有される値です。
+            /// </summary>
             public StackProbeDelegate Probe;
+            /// <summary>
+            /// Tickを保持します。型は Action で、関連処理から共有される値です。
+            /// </summary>
             public Action Tick;
+            /// <summary>
+            /// IntroducerFactoryを保持します。型は PeerIntroducerFactory で、関連処理から共有される値です。
+            /// </summary>
             public PeerIntroducerFactory IntroducerFactory;
         }
 
@@ -57,8 +139,14 @@ namespace Basis.Network.Core
         private static readonly object _lock = new object();
         private static string _activeStackId = string.Empty;
 
+        /// <summary>
+        /// ActiveStackChangedを保持します。型は event Action<string> で、関連処理から共有される値です。
+        /// </summary>
         public static event Action<string> ActiveStackChanged;
 
+        /// <summary>
+        /// BasisネットワークStackRegistryを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisNetworkStackRegistry()
         {
             Register(LiteNetLibId, "LiteNetLib", (listener, config) => new LNLNetManager(listener, config));
@@ -66,6 +154,9 @@ namespace Basis.Network.Core
             BasisTransportConfigStore.RegisterType(LiteNetLibId, typeof(LNLTransportConfig));
         }
 
+        /// <summary>
+        /// Registerを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Register(string id, string displayName, NetManagerFactory factory)
         {
             if (string.IsNullOrEmpty(id)) throw new ArgumentException("Stack id is required", nameof(id));
@@ -79,6 +170,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// RegisterParserを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterParser(string stackId, IConnectionTargetParser parser)
         {
             if (string.IsNullOrEmpty(stackId)) throw new ArgumentException("Stack id is required", nameof(stackId));
@@ -94,6 +188,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// RegisterProbeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterProbe(string stackId, StackProbeDelegate probe)
         {
             if (string.IsNullOrEmpty(stackId)) throw new ArgumentException("Stack id is required", nameof(stackId));
@@ -109,6 +206,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// RegisterTickを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterTick(string stackId, Action tick)
         {
             if (string.IsNullOrEmpty(stackId)) throw new ArgumentException("Stack id is required", nameof(stackId));
@@ -124,6 +224,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// RegisterIntroducerFactoryを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterIntroducerFactory(string stackId, PeerIntroducerFactory factory)
         {
             if (string.IsNullOrEmpty(stackId)) throw new ArgumentException("Stack id is required", nameof(stackId));
@@ -139,6 +242,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// Createを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static NetManager Create(string id, EventBasedNetListener listener, Configuration configuration)
         {
             string effective = string.IsNullOrEmpty(id) ? DefaultId : id;
@@ -162,6 +268,9 @@ namespace Basis.Network.Core
             get { lock (_lock) return _activeStackId; }
         }
 
+        /// <summary>
+        /// SetActiveStackIdを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         public static void SetActiveStackId(string id)
         {
             string normalized = string.IsNullOrEmpty(id) ? string.Empty : id;
@@ -181,6 +290,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// GetParserを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static IConnectionTargetParser GetParser(string stackId)
         {
             string effective = string.IsNullOrEmpty(stackId) ? DefaultId : stackId;
@@ -196,6 +308,9 @@ namespace Basis.Network.Core
             return null;
         }
 
+        /// <summary>
+        /// ProbeAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static Task<ServerProbeResult> ProbeAsync(ConnectionTarget target, int timeoutMs, CancellationToken ct)
         {
             if (target == null) return Task.FromResult(new ServerProbeResult { Error = "Target is null" });
@@ -223,6 +338,9 @@ namespace Basis.Network.Core
             return probe(target, timeoutMs, ct);
         }
 
+        /// <summary>
+        /// TickActiveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void TickActive()
         {
             Action tick = null;
@@ -239,6 +357,9 @@ namespace Basis.Network.Core
             catch (Exception ex) { BNL.LogError($"Stack tick threw: {ex.Message}"); }
         }
 
+        /// <summary>
+        /// CreateIntroducerを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static IPeerIntroducer CreateIntroducer(string stackId, NetManager activeManager)
         {
             string effective = string.IsNullOrEmpty(stackId) ? DefaultId : stackId;
@@ -262,6 +383,9 @@ namespace Basis.Network.Core
             return factory(activeManager);
         }
 
+        /// <summary>
+        /// IsRegisteredを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsRegistered(string id)
         {
             if (string.IsNullOrEmpty(id)) return false;
@@ -273,6 +397,9 @@ namespace Basis.Network.Core
             get { lock (_lock) return _stacks.ToArray(); }
         }
 
+        /// <summary>
+        /// GetDisplayNameを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static string GetDisplayName(string id)
         {
             if (string.IsNullOrEmpty(id)) id = DefaultId;

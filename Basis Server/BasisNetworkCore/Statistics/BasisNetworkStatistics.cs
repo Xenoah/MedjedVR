@@ -28,6 +28,9 @@ namespace BasisNetworkServer.BasisNetworking
         // thread-local の stripe 選択。0 は「未初期化」を表す。
         [ThreadStatic] private static int _stripePlusOne;
 
+        /// <summary>
+        /// Basisネットワーク統計を生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisNetworkStatistics()
         {
             _inCountStripes = new long[StripeCount][];
@@ -43,11 +46,17 @@ namespace BasisNetworkServer.BasisNetworking
                 _outBytesStripes[s] = new long[Indices];
             }
         }
+        /// <summary>
+        /// IsRecordingDataを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool IsRecordingData = false;
         // ===== 記録 API =====
 
         /// <summary><paramref name="index"/> の inbound message を 1 件記録し、encoded byte length を加算する。</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// RecordInboundを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RecordInbound(byte index, int bytesEncoded)
         {
             if(!IsRecordingData)
@@ -63,6 +72,9 @@ namespace BasisNetworkServer.BasisNetworking
 
         /// <summary><paramref name="index"/> の outbound message を 1 件記録し、encoded byte length を加算する。</summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// RecordOutboundを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RecordOutbound(byte index, int bytesEncoded)
         {
             if (!IsRecordingData)
@@ -84,6 +96,9 @@ namespace BasisNetworkServer.BasisNetworking
         /// 1000 人以上の player では BSR hot path の CPU を数パーセント節約する。
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// RecordOutboundBatchを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RecordOutboundBatch(byte index, long count, long bytesEncoded)
         {
             if (!IsRecordingData || count <= 0)
@@ -180,6 +195,9 @@ namespace BasisNetworkServer.BasisNetworking
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// EnsureStripeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int EnsureStripe()
         {
             int sPlusOne = _stripePlusOne;
@@ -192,6 +210,9 @@ namespace BasisNetworkServer.BasisNetworking
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// PickStripeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int PickStripe()
         {
             // thread を stripes へ安定かつ低コストに分散する。
@@ -206,13 +227,27 @@ namespace BasisNetworkServer.BasisNetworking
                 return (int)(x % (uint)StripeCount);
             }
         }
+        /// <summary>
+        /// IndexStatsの責務をまとめる構造体です。
+        /// Statistics領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public readonly struct IndexStats
         {
+            /// <summary>
+            /// Countを保持します。型は ulong で、関連処理から共有される値です。
+            /// </summary>
             public readonly ulong Count;
+            /// <summary>
+            /// Bytesを保持します。型は ulong で、関連処理から共有される値です。
+            /// </summary>
             public readonly ulong Bytes;
             public IndexStats(ulong count, ulong bytes) { Count = count; Bytes = bytes; }
         }
 
+        /// <summary>
+        /// Snapshotの責務をまとめるクラスです。
+        /// Statistics領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public sealed class Snapshot
         {
             // 後方互換 (inbound):
@@ -220,6 +255,9 @@ namespace BasisNetworkServer.BasisNetworking
             // 新規 (outbound):
             public readonly Dictionary<byte, IndexStats> OutPerIndex;
 
+            /// <summary>
+            /// Snapshotを生成し、利用に必要な初期状態を設定します。
+            /// </summary>
             public Snapshot( Dictionary<byte, IndexStats> inPerIndex, Dictionary<byte, IndexStats> outPerIndex)
             {
                 PerIndex = inPerIndex;
@@ -269,6 +307,9 @@ namespace BasisNetworkServer.BasisNetworking
                 return ms.ToArray();
             }
 
+            /// <summary>
+            /// DecodeSnapshotを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static Snapshot DecodeSnapshot(ReadOnlySpan<byte> raw)
             {
                 var r = new SpanReader(raw);
@@ -279,6 +320,9 @@ namespace BasisNetworkServer.BasisNetworking
                 return new Snapshot(inPer, outPer);
             }
 
+            /// <summary>
+            /// WriteMapを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static void WriteMap(Stream s, Dictionary<byte, IndexStats> map)
             {
                 int n = 0;
@@ -293,6 +337,9 @@ namespace BasisNetworkServer.BasisNetworking
                 }
             }
 
+            /// <summary>
+            /// ReadMapを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static Dictionary<byte, IndexStats> ReadMap(ref SpanReader r)
             {
                 uint n = r.ReadUVar32();
@@ -306,6 +353,9 @@ namespace BasisNetworkServer.BasisNetworking
                 }
                 return dict;
             }
+            /// <summary>
+            /// WriteUVarを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static void WriteUVar(Stream s, ulong value)
             {
                 // ulong は最大 10 bytes
@@ -319,16 +369,26 @@ namespace BasisNetworkServer.BasisNetworking
 
             private static void WriteUVar(Stream s, uint value) => WriteUVar(s, (ulong)value);
 
+            /// <summary>
+            /// SpanReaderの責務をまとめる構造体です。
+            /// Statistics領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+            /// </summary>
             private ref struct SpanReader
             {
                 private ReadOnlySpan<byte> _span;
                 private int _pos;
                 public SpanReader(ReadOnlySpan<byte> span) { _span = span; _pos = 0; }
+                /// <summary>
+                /// ReadByteを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+                /// </summary>
                 public byte ReadByte()
                 {
                     if (_pos >= _span.Length) throw new EndOfStreamException();
                     return _span[_pos++];
                 }
+                /// <summary>
+                /// ReadUVarを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+                /// </summary>
                 public ulong ReadUVar()
                 {
                     ulong result = 0;
@@ -342,6 +402,9 @@ namespace BasisNetworkServer.BasisNetworking
                         if (shift > 63) throw new InvalidDataException("Varint too long");
                     }
                 }
+                /// <summary>
+                /// ReadUVar32を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+                /// </summary>
                 public uint ReadUVar32()
                 {
                     ulong v = ReadUVar();
@@ -350,6 +413,9 @@ namespace BasisNetworkServer.BasisNetworking
                 }
             }
 
+            /// <summary>
+            /// BrotliCompressを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static byte[] BrotliCompress(ReadOnlySpan<byte> raw, int quality)
             {
                 using var ms = new MemoryStream(raw.Length / 2);
@@ -360,6 +426,9 @@ namespace BasisNetworkServer.BasisNetworking
                 return ms.ToArray();
             }
 
+            /// <summary>
+            /// BrotliDecompressToSpanを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             private static ReadOnlySpan<byte> BrotliDecompressToSpan(ReadOnlySpan<byte> comp)
             {
                 using var input = new MemoryStream(comp.ToArray());

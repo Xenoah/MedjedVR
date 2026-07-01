@@ -2,21 +2,49 @@ using System.Xml.Linq;
 
 namespace Basis.Config
 {
+    /// <summary>
+    /// 設定管理の責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class ConfigManager
     {
+        /// <summary>
+        /// Passwordを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public static string Password = "default_password";
+        /// <summary>
+        /// Ipを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public static string Ip = "localhost";
+        /// <summary>
+        /// Portを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int Port = 4296;
+        /// <summary>
+        /// クライアントCountを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int ClientCount = 250;
 
+        /// <summary>
+        /// アバターPasswordを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public static string AvatarPassword = "default_avatar_password";
+        /// <summary>
+        /// アバターUrlを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public static string AvatarUrl = "http://localhost/avatar";
+        /// <summary>
+        /// アバター読み込みModeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int AvatarLoadMode = 1;
 
         private static readonly object _lock = new();
         static XElement? Child(XElement parent, string name) =>
             parent.Elements().FirstOrDefault(e => e.Name.LocalName == name);
 
+        /// <summary>
+        /// ReadStringを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static string ReadString(XElement root, string name, string fallback)
         {
             var el = Child(root, name);
@@ -31,6 +59,9 @@ namespace Basis.Config
             return value;
         }
 
+        /// <summary>
+        /// ReadIntを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static int ReadInt(XElement root, string name, int fallback)
         {
             var el = Child(root, name);

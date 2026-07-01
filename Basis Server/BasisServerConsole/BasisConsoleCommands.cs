@@ -6,8 +6,15 @@ using System.Reflection;
 using static BasisPermissions.PermissionManager;
 namespace BasisNetworkConsole
 {
+    /// <summary>
+    /// BasisConsoleCommandsの責務をまとめるクラスです。
+    /// ServerConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisConsoleCommands
     {
+        /// <summary>
+        /// commandsを保持します。型は Dictionary<string, Command> で、関連処理から共有される値です。
+        /// </summary>
         public static Dictionary<string, Command> commands = new Dictionary<string, Command>();
         // command を登録する。
         public static void RegisterCommand(string commandName, string Description, Action<string[]> handler)
@@ -25,6 +32,9 @@ namespace BasisNetworkConsole
                 RegisterCommand(commandName, string.Empty, (args) => HandleConfigField(args, field, config));
             }
         }
+        /// <summary>
+        /// 処理設定Fieldを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleConfigField(string[] args, FieldInfo field, Configuration config)
         {
             if (args.Length == 0)
@@ -92,6 +102,9 @@ namespace BasisNetworkConsole
             }
         }
         private static Thread? consoleThread;
+        /// <summary>
+        /// Register権限Commandsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterPermissionCommands()
         {
             // root help
@@ -136,11 +149,17 @@ namespace BasisNetworkConsole
         }
         private static PermissionManager PM => PermissionIntegration.Manager;
 
+        /// <summary>
+        /// 処理PermRootを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermRoot(string[] args)
         {
             HandlePermHelp(args);
         }
 
+        /// <summary>
+        /// 処理PermHelpを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermHelp(string[] args)
         {
             BNL.Log("Permission commands:");
@@ -181,6 +200,9 @@ namespace BasisNetworkConsole
             BNL.Log($"permissions.xml path: {PM.GetXmlPath()}");
         }
 
+        /// <summary>
+        /// 処理PermPathSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermPathSet(string[] args)
         {
             if (args.Length < 1)
@@ -194,12 +216,18 @@ namespace BasisNetworkConsole
             BNL.Log($"Set permissions.xml path to: {PM.GetXmlPath()}");
         }
 
+        /// <summary>
+        /// 処理Perm読み込みを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermLoad(string[] args)
         {
             PM.LoadFromXml();
             BNL.Log($"Loaded permissions from: {PM.GetXmlPath()}");
         }
 
+        /// <summary>
+        /// 処理Perm読み込みFromを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermLoadFrom(string[] args)
         {
             if (args.Length < 1)
@@ -214,12 +242,18 @@ namespace BasisNetworkConsole
             BNL.Log($"Loaded permissions from: {path}");
         }
 
+        /// <summary>
+        /// 処理PermSaveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermSave(string[] args)
         {
             PM.SaveToXml();
             BNL.Log($"Saved permissions to: {PM.GetXmlPath()}");
         }
 
+        /// <summary>
+        /// 処理PermSaveToを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermSaveTo(string[] args)
         {
             if (args.Length < 1)
@@ -233,6 +267,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Saved permissions to: {path}");
         }
 
+        /// <summary>
+        /// 処理PermReloadを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermReload(string[] args)
         {
             PM.SaveToXml();
@@ -240,6 +277,9 @@ namespace BasisNetworkConsole
             BNL.Log("Reloaded permissions (save -> load).");
         }
 
+        /// <summary>
+        /// 処理PermDefaultsを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermDefaults(string[] args)
         {
             PM.EnsureDefaults();
@@ -262,6 +302,9 @@ namespace BasisNetworkConsole
                 BNL.Log($"- {u}");
         }
 
+        /// <summary>
+        /// 処理PermUserCreateを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserCreate(string[] args)
         {
             if (args.Length < 1)
@@ -276,6 +319,9 @@ namespace BasisNetworkConsole
             BNL.Log($"User ensured: {uuid}");
         }
 
+        /// <summary>
+        /// 処理PermUserInfoを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserInfo(string[] args)
         {
             if (args.Length < 1)
@@ -296,6 +342,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Nodes ({user.Nodes.Count}): {(user.Nodes.Count == 0 ? "(none)" : string.Join(", ", user.Nodes.OrderBy(x => x)))}");
         }
 
+        /// <summary>
+        /// 処理PermUserNodeAddを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserNodeAdd(string[] args)
         {
             if (args.Length < 2)
@@ -310,6 +359,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Added user node: {uuid} -> {node}");
         }
 
+        /// <summary>
+        /// 処理PermUserNodeRemoveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserNodeRemove(string[] args)
         {
             if (args.Length < 2)
@@ -324,6 +376,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Removed user node: {uuid} -> {node}");
         }
 
+        /// <summary>
+        /// 処理PermUserGroupAddを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserGroupAdd(string[] args)
         {
             if (args.Length < 2)
@@ -338,6 +393,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Added user to group: {uuid} -> {group}");
         }
 
+        /// <summary>
+        /// 処理PermUserGroupRemoveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserGroupRemove(string[] args)
         {
             if (args.Length < 2)
@@ -352,6 +410,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Removed user from group: {uuid} -> {group}");
         }
 
+        /// <summary>
+        /// 処理PermUserEffectiveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermUserEffective(string[] args)
         {
             if (args.Length < 1)
@@ -386,6 +447,9 @@ namespace BasisNetworkConsole
                 BNL.Log($"- {g}");
         }
 
+        /// <summary>
+        /// 処理PermGroupCreateを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupCreate(string[] args)
         {
             if (args.Length < 1)
@@ -400,6 +464,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Group ensured: {name}");
         }
 
+        /// <summary>
+        /// 処理PermGroupInfoを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupInfo(string[] args)
         {
             if (args.Length < 1)
@@ -420,6 +487,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Nodes ({group.Nodes.Count}): {(group.Nodes.Count == 0 ? "(none)" : string.Join(", ", group.Nodes.OrderBy(x => x)))}");
         }
 
+        /// <summary>
+        /// 処理PermGroupNodeAddを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupNodeAdd(string[] args)
         {
             if (args.Length < 2)
@@ -434,6 +504,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Added group node: {group} -> {node}");
         }
 
+        /// <summary>
+        /// 処理PermGroupNodeRemoveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupNodeRemove(string[] args)
         {
             if (args.Length < 2)
@@ -448,6 +521,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Removed group node: {group} -> {node}");
         }
 
+        /// <summary>
+        /// 処理PermGroupParentAddを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupParentAdd(string[] args)
         {
             if (args.Length < 2)
@@ -462,6 +538,9 @@ namespace BasisNetworkConsole
             BNL.Log($"Added parent: {group} -> {parent}");
         }
 
+        /// <summary>
+        /// 処理PermGroupParentRemoveを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermGroupParentRemove(string[] args)
         {
             if (args.Length < 2)
@@ -492,6 +571,9 @@ namespace BasisNetworkConsole
             bool has = PM.Has(uuid, node);
             BNL.Log($"Check: uuid={uuid} node={node} => {(has ? "ALLOW" : "DENY")}");
         }
+        /// <summary>
+        /// StartConsoleListenerを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public static void StartConsoleListener()
         {
             consoleThread = new Thread(() =>
@@ -535,6 +617,9 @@ namespace BasisNetworkConsole
             consoleThread.IsBackground = true;
             consoleThread.Start();
         }
+        /// <summary>
+        /// 処理ShowPlayersを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleShowPlayers(string[] args)
         {
             string ConnectedPlayerNames = $"Connected Player count is {NetworkServer.AuthenticatedPeers.Count} ";
@@ -547,6 +632,9 @@ namespace BasisNetworkConsole
             }
             BNL.Log(ConnectedPlayerNames);
         }
+        /// <summary>
+        /// 処理Statusを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleStatus(string[] args)
         {
             // server status 表示の例。
@@ -554,6 +642,9 @@ namespace BasisNetworkConsole
             // 必要に応じて、ここに status detail を追加できる。
         }
 
+        /// <summary>
+        /// 処理Shutdownを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleShutdown(string[] args)
         {
             BNL.Log("Shutting down the server...");
@@ -561,6 +652,9 @@ namespace BasisNetworkConsole
             Environment.Exit(0); // application を終了する。
         }
 
+        /// <summary>
+        /// 処理Helpを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleHelp(string[] args)
         {
             BNL.Log("Available commands:");
@@ -577,6 +671,9 @@ namespace BasisNetworkConsole
                 }
             }
         }
+        /// <summary>
+        /// 処理Clearを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleClear(string[] args)
         {
             BNL.ClearConsole();

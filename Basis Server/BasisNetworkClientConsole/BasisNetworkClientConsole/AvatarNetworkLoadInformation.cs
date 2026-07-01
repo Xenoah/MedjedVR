@@ -3,9 +3,19 @@ using System.IO.Compression;
 namespace Basis.Scripts.BasisSdk.Players
 {
     [Serializable]
+    /// <summary>
+    /// Basisアバターネットワーク読み込みの責務をまとめる構造体です。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public struct BasisAvatarNetworkLoad
     {
+        /// <summary>
+        /// URLを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string URL;
+        /// <summary>
+        /// UnlockPasswordを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string UnlockPassword;
 
         /// <summary>

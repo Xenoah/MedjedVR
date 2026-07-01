@@ -10,6 +10,10 @@ using System.Threading;
 
 namespace Basis.Network.Server
 {
+/// <summary>
+/// BasisRestApiRoutesの責務をまとめるクラスです。
+/// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public sealed class BasisRestApiRoutes
 {
     private const int MaxBodyBytes     = 1 << 20;
@@ -18,6 +22,9 @@ public sealed class BasisRestApiRoutes
     private static readonly JsonElement  EmptyObject;
     private readonly IServerControl _control;
 
+    /// <summary>
+    /// BasisRestApiRoutesを生成し、利用に必要な初期状態を設定します。
+    /// </summary>
     static BasisRestApiRoutes()
     {
         using var d = JsonDocument.Parse("{}");
@@ -26,6 +33,9 @@ public sealed class BasisRestApiRoutes
 
     public BasisRestApiRoutes(IServerControl control) { _control = control; }
 
+    /// <summary>
+    /// Dispatchを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public void Dispatch(HttpListenerRequest req, HttpListenerResponse res, string[] segments, CancellationToken cancellationToken = default)
     {
         string resource = segments.Length > 1 ? segments[1] : "";
@@ -78,6 +88,9 @@ public sealed class BasisRestApiRoutes
         }
     }
 
+    /// <summary>
+    /// AnnounceAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void AnnounceAll(HttpListenerRequest req, HttpListenerResponse res)
     {
         if (ReadBody(req, res) is not { } body) return;
@@ -86,6 +99,9 @@ public sealed class BasisRestApiRoutes
         WriteJson(res, """{"ok":true}""");
     }
 
+    /// <summary>
+    /// Announceプレイヤーを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void AnnouncePlayer(HttpListenerRequest req, HttpListenerResponse res, string uuid)
     {
         if (ReadBody(req, res) is not { } body) return;
@@ -94,6 +110,9 @@ public sealed class BasisRestApiRoutes
         WriteJson(res, """{"ok":true}""");
     }
 
+    /// <summary>
+    /// ListPlayersを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void ListPlayers(HttpListenerResponse res)
     {
         var entries = _control.ListPlayers().Select(p =>
@@ -101,6 +120,9 @@ public sealed class BasisRestApiRoutes
         WriteJson(res, $$"""{"players":[{{string.Join(",", entries)}}]}""");
     }
 
+    /// <summary>
+    /// ListWorldsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void ListWorlds(HttpListenerResponse res)
     {
         var entries = _control.ListWorlds().Select(w =>
@@ -108,6 +130,9 @@ public sealed class BasisRestApiRoutes
         WriteJson(res, $$"""{"worlds":[{{string.Join(",", entries)}}]}""");
     }
 
+    /// <summary>
+    /// 読み込みWorldを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+    /// </summary>
     private void LoadWorld(HttpListenerRequest req, HttpListenerResponse res)
     {
         if (ReadBody(req, res) is not { } body) return;
@@ -142,18 +167,27 @@ public sealed class BasisRestApiRoutes
         WriteJson(res, $$"""{"ok":true,"netId":{{JsonSerializer.Serialize(netId)}}}""");
     }
 
+    /// <summary>
+    /// UnloadWorldを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void UnloadWorld(HttpListenerResponse res, string netId)
     {
         if (!_control.UnloadWorld(netId)) { NotFound(res, "world not found"); return; }
         WriteJson(res, """{"ok":true}""");
     }
 
+    /// <summary>
+    /// ClearAllWorldsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void ClearAllWorlds(HttpListenerResponse res)
     {
         int count = _control.ClearAllWorlds();
         WriteJson(res, $$"""{"ok":true,"unloaded":{{count}}}""");
     }
 
+    /// <summary>
+    /// SwitchWorldを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private void SwitchWorld(HttpListenerRequest req, HttpListenerResponse res, CancellationToken cancellationToken)
     {
         if (ReadBody(req, res) is not { } body) return;
@@ -194,6 +228,9 @@ public sealed class BasisRestApiRoutes
         return true;
     }
 
+    /// <summary>
+    /// TryGetUrlAndPasswordを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+    /// </summary>
     private bool TryGetUrlAndPassword(JsonElement body, HttpListenerResponse res, out string url, out string password)
     {
         url = ""; password = "";
@@ -229,6 +266,9 @@ public sealed class BasisRestApiRoutes
         return (raw, null);
     }
 
+    /// <summary>
+    /// DecodeFragmentPasswordを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static string? DecodeFragmentPassword(string fragment)
     {
         if (string.IsNullOrEmpty(fragment)) return null;
@@ -236,6 +276,9 @@ public sealed class BasisRestApiRoutes
         catch { return fragment; }
     }
 
+    /// <summary>
+    /// RequireHttpsUrlを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static bool RequireHttpsUrl(string url, HttpListenerResponse res)
     {
         if (Uri.TryCreate(url, UriKind.Absolute, out var parsed) && parsed.Scheme == Uri.UriSchemeHttps)
@@ -267,6 +310,9 @@ public sealed class BasisRestApiRoutes
         catch (JsonException) { BadRequest(res, "invalid JSON body"); return null; }
     }
 
+    /// <summary>
+    /// WriteJsonを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void WriteJson(HttpListenerResponse res, string json, int status = 200)
     {
         byte[] payload = Encoding.UTF8.GetBytes(json);
@@ -283,6 +329,9 @@ public sealed class BasisRestApiRoutes
     private static void NotFound(HttpListenerResponse res, string msg = "not found") =>
         WriteJson(res, $$"""{"error":{{JsonSerializer.Serialize(msg)}}}""", 404);
 
+    /// <summary>
+    /// MethodNotAllowedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void MethodNotAllowed(HttpListenerResponse res, string allow)
     {
         res.StatusCode = 405;

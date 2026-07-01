@@ -11,6 +11,10 @@ using static SerializableBasis;
 
 namespace Basis.Network.Server
 {
+    /// <summary>
+    /// 読み込みStrategyの責務をまとめる列挙型です。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public enum LoadStrategy : byte
     {
         Immediate    = 0,
@@ -23,6 +27,10 @@ namespace Basis.Network.Server
     public record WorldInfo(string NetId, string Url, bool Persistent, bool AdminLocked, LoadStrategy Strategy);
     public record PlayerInfo(int NetId, string Uuid, string DisplayName, string Platform);
 
+    /// <summary>
+    /// IサーバーControlの責務をまとめるインターフェイスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public interface IServerControl
     {
         void AnnounceAll(string message);
@@ -35,8 +43,15 @@ namespace Basis.Network.Server
         string SwitchWorld(SwitchWorldParams p, CancellationToken cancellationToken = default);
     }
 
+    /// <summary>
+    /// BasisサーバーControlの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class BasisServerControl : IServerControl
     {
+        /// <summary>
+        /// AnnounceAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void AnnounceAll(string message)
         {
             var writer = NetworkServer.RentWriter();
@@ -50,6 +65,9 @@ namespace Basis.Network.Server
             BNL.Log($"[Control] Announced to all: {message}");
         }
 
+        /// <summary>
+        /// Announceプレイヤーを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public bool AnnouncePlayer(string uuid, string message)
         {
             if (NetworkServer.AuthIdentity == null ||
@@ -61,6 +79,9 @@ namespace Basis.Network.Server
             return true;
         }
 
+        /// <summary>
+        /// 読み込みWorldを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public string LoadWorld(WorldLoadParams p)
         {
             var resource = BuildResource(p.Url, p.Password, p.Persistent, p.Strategy);
@@ -83,6 +104,9 @@ namespace Basis.Network.Server
         public bool UnloadWorld(string netId) =>
             BasisNetworkResourceManagement.UnloadResource(new UnLoadResource { LoadedNetID = netId, Mode = 1 });
 
+        /// <summary>
+        /// ClearAllWorldsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public int ClearAllWorlds()
         {
             var peers  = NetworkServer.PeerSnapshot;
@@ -126,6 +150,9 @@ namespace Basis.Network.Server
                 .Select(r => new WorldInfo(r.LoadedNetID, r.CombinedURL, r.Persist, r.IsAdminLocked, (LoadStrategy)r.LoadStrategy))
                 .ToList();
 
+        /// <summary>
+        /// ListPlayersを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public IReadOnlyList<PlayerInfo> ListPlayers()
         {
             var result = new List<PlayerInfo>();
@@ -145,6 +172,9 @@ namespace Basis.Network.Server
             return result;
         }
 
+        /// <summary>
+        /// SwitchWorldを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public string SwitchWorld(SwitchWorldParams p, CancellationToken cancellationToken = default)
         {
             var resource = BuildResource(p.Url, p.Password, p.Persistent, LoadStrategy.Synchronized);

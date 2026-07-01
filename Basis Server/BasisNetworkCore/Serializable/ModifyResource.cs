@@ -1,4 +1,8 @@
 using Basis.Network.Core;
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -18,6 +22,9 @@ public static partial class SerializableBasis
         /// <summary>希望する admin tier。true の場合は moderator のみ変更可能で、Static を含意する。</summary>
         public bool StaticAdminLocked;
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(LoadedNetID);
@@ -25,6 +32,9 @@ public static partial class SerializableBasis
             writer.Put(Static);
             writer.Put(StaticAdminLocked);
         }
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             LoadedNetID = reader.GetString();

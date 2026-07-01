@@ -17,11 +17,27 @@ namespace Basis.Network.Core
     /// </summary>
     public static class BasisConfigXmlDocs
     {
+        /// <summary>
+        /// FieldDocの責務をまとめるクラスです。
+        /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public sealed class FieldDoc
         {
+            /// <summary>
+            /// Fieldを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public readonly string Field;
+            /// <summary>
+            /// Commentを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public readonly string Comment;
+            /// <summary>
+            /// Sectionを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public readonly string Section;
+            /// <summary>
+            /// FieldDocを生成し、利用に必要な初期状態を設定します。
+            /// </summary>
             public FieldDoc(string field, string comment, string section = null)
             {
                 Field = field;
@@ -30,14 +46,27 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// TypeDocの責務をまとめるクラスです。
+        /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private sealed class TypeDoc
         {
+            /// <summary>
+            /// Headerを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public string Header;
+            /// <summary>
+            /// Fieldsを保持します。型は List<FieldDoc> で、関連処理から共有される値です。
+            /// </summary>
             public readonly List<FieldDoc> Fields = new List<FieldDoc>();
         }
 
         private static readonly Dictionary<Type, TypeDoc> _docs = new Dictionary<Type, TypeDoc>();
 
+        /// <summary>
+        /// Basis設定XmlDocsを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisConfigXmlDocs()
         {
             RegisterServerConfig();
@@ -57,6 +86,9 @@ namespace Basis.Network.Core
             doc.Save(writer);
         }
 
+        /// <summary>
+        /// Injectを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Inject(XDocument doc, Type type)
         {
             if (doc.Root == null || !_docs.TryGetValue(type, out TypeDoc entry)) return;
@@ -123,6 +155,9 @@ namespace Basis.Network.Core
             if (f != null && f.FieldType == typeof(int)) f.SetValue(config, ReadCurrentVersion(type));
         }
 
+        /// <summary>
+        /// ReadVersionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int ReadVersion(object config)
         {
             if (config == null) return 0;
@@ -131,6 +166,9 @@ namespace Basis.Network.Core
             return 0;
         }
 
+        /// <summary>
+        /// ReadCurrentVersionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int ReadCurrentVersion(Type type)
         {
             FieldInfo f = type.GetField(CurrentVersionFieldName, BindingFlags.Public | BindingFlags.Static);
@@ -138,6 +176,9 @@ namespace Basis.Network.Core
             return 0;
         }
 
+        /// <summary>
+        /// Registerサーバー設定を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void RegisterServerConfig()
         {
             var t = new TypeDoc
@@ -196,6 +237,9 @@ namespace Basis.Network.Core
             _docs[typeof(global::Configuration)] = t;
         }
 
+        /// <summary>
+        /// RegisterLnl設定を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void RegisterLnlConfig()
         {
             var t = new TypeDoc

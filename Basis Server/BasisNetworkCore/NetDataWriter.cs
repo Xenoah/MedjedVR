@@ -13,9 +13,19 @@ using System.Threading;
 using Unity.Collections.LowLevel.Unsafe;
 #endif
 namespace Basis.Network.Core {
+    /// <summary>
+    /// NetDataWriterの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class NetDataWriter
     {
+        /// <summary>
+        /// dataを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         protected byte[] _data;
+        /// <summary>
+        /// positionを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         protected int _position;
         private const int InitialSize = 64;
         private readonly bool _autoResize;
@@ -35,21 +45,36 @@ namespace Basis.Network.Core {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => _position;
         }
+        /// <summary>
+        /// AsReadOnlySpanを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public ReadOnlySpan<byte> AsReadOnlySpan()
         {
             return new ReadOnlySpan<byte>(_data, 0, _position);
         }
 
+        /// <summary>
+        /// uTF8Encodingを保持します。型は ThreadLocal<UTF8Encoding> で、関連処理から共有される値です。
+        /// </summary>
         public static readonly ThreadLocal<UTF8Encoding> uTF8Encoding = new ThreadLocal<UTF8Encoding>(() => new UTF8Encoding(false, true));
 
+        /// <summary>
+        /// NetDataWriterを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public NetDataWriter() : this(true, InitialSize)
         {
         }
 
+        /// <summary>
+        /// NetDataWriterを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public NetDataWriter(bool autoResize) : this(autoResize, InitialSize)
         {
         }
 
+        /// <summary>
+        /// NetDataWriterを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public NetDataWriter(bool autoResize, int initialSize)
         {
             _data = new byte[initialSize];
@@ -93,6 +118,9 @@ namespace Basis.Network.Core {
             netDataWriter.Put(bytes);
             return netDataWriter;
         }
+        /// <summary>
+        /// FromStringを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static NetDataWriter FromString(string value)
         {
             var netDataWriter = new NetDataWriter();
@@ -101,6 +129,9 @@ namespace Basis.Network.Core {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// ResizeIfNeedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void ResizeIfNeed(int newSize)
         {
             if (_data.Length < newSize)
@@ -110,6 +141,9 @@ namespace Basis.Network.Core {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// EnsureFitを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void EnsureFit(int additionalSize)
         {
             if (_data.Length < _position + additionalSize)
@@ -118,17 +152,26 @@ namespace Basis.Network.Core {
             }
         }
 
+        /// <summary>
+        /// Resetを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Reset(int size)
         {
             ResizeIfNeed(size);
             _position = 0;
         }
 
+        /// <summary>
+        /// Resetを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Reset()
         {
             _position = 0;
         }
 
+        /// <summary>
+        /// CopyDataを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public byte[] CopyData()
         {
             byte[] resultData = new byte[_position];
@@ -148,6 +191,9 @@ namespace Basis.Network.Core {
             return prevPosition;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(float value)
         {
             if (_autoResize)
@@ -156,6 +202,9 @@ namespace Basis.Network.Core {
             _position += 4;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(double value)
         {
             if (_autoResize)
@@ -164,6 +213,9 @@ namespace Basis.Network.Core {
             _position += 8;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(long value)
         {
             if (_autoResize)
@@ -172,6 +224,9 @@ namespace Basis.Network.Core {
             _position += 8;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(ulong value)
         {
             if (_autoResize)
@@ -180,6 +235,9 @@ namespace Basis.Network.Core {
             _position += 8;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(int value)
         {
             if (_autoResize)
@@ -188,6 +246,9 @@ namespace Basis.Network.Core {
             _position += 4;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(uint value)
         {
             if (_autoResize)
@@ -196,11 +257,17 @@ namespace Basis.Network.Core {
             _position += 4;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(char value)
         {
             Put((ushort)value);
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(ushort value)
         {
             if (_autoResize)
@@ -209,6 +276,9 @@ namespace Basis.Network.Core {
             _position += 2;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(short value)
         {
             if (_autoResize)
@@ -217,6 +287,9 @@ namespace Basis.Network.Core {
             _position += 2;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(sbyte value)
         {
             if (_autoResize)
@@ -225,6 +298,9 @@ namespace Basis.Network.Core {
             _position++;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(byte value)
         {
             if (_autoResize)
@@ -233,6 +309,9 @@ namespace Basis.Network.Core {
             _position++;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(Guid value)
         {
             if (_autoResize)
@@ -241,6 +320,9 @@ namespace Basis.Network.Core {
             _position += 16;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(byte[] data, int offset, int length)
         {
             if (_autoResize)
@@ -249,6 +331,9 @@ namespace Basis.Network.Core {
             _position += length;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(byte[] data)
         {
             if (_autoResize)
@@ -256,6 +341,9 @@ namespace Basis.Network.Core {
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(ReadOnlySpan<byte> data)
         {
             if (_autoResize)
@@ -292,11 +380,17 @@ namespace Basis.Network.Core {
             PutArray(data, 1);
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(bool value)
         {
             Put((byte)(value ? 1 : 0));
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(Array arr, int sz)
         {
             ushort length = arr == null ? (ushort) 0 : (ushort)arr.Length;
@@ -309,51 +403,81 @@ namespace Basis.Network.Core {
             _position += sz + 2;
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(float[] value)
         {
             PutArray(value, 4);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(double[] value)
         {
             PutArray(value, 8);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(long[] value)
         {
             PutArray(value, 8);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(ulong[] value)
         {
             PutArray(value, 8);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(int[] value)
         {
             PutArray(value, 4);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(uint[] value)
         {
             PutArray(value, 4);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(ushort[] value)
         {
             PutArray(value, 2);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(short[] value)
         {
             PutArray(value, 2);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(bool[] value)
         {
             PutArray(value, 1);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(string[] value)
         {
             ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
@@ -362,6 +486,9 @@ namespace Basis.Network.Core {
                 Put(value[i]);
         }
 
+        /// <summary>
+        /// PutArrayを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PutArray(string[] value, int strMaxLength)
         {
             ushort strArrayLength = value == null ? (ushort)0 : (ushort)value.Length;
@@ -404,6 +531,9 @@ namespace Basis.Network.Core {
             _position += size;
         }
 
+        /// <summary>
+        /// Putを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Put(string value)
         {
             Put(value, 0);

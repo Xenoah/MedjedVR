@@ -7,25 +7,73 @@ using LiteNatPunchListener = LiteNetLib.EventBasedNatPunchListener;
 
 namespace BasisNetworkServer
 {
+    /// <summary>
+    /// BasisサーバーP2PBrokerの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisServerP2PBroker
     {
+        /// <summary>
+        /// Session状態の責務をまとめる列挙型です。
+        /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private enum SessionState : byte { Awaiting, ReadyForPunch, Punched }
 
+        /// <summary>
+        /// Sessionの責務をまとめるクラスです。
+        /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private sealed class Session
         {
+            /// <summary>
+            /// Tokenを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public string Token;
+            /// <summary>
+            /// InitiatorピアIdを保持します。型は int で、関連処理から共有される値です。
+            /// </summary>
             public int InitiatorPeerId;
+            /// <summary>
+            /// TargetピアIdを保持します。型は int で、関連処理から共有される値です。
+            /// </summary>
             public int TargetPeerId;
+            /// <summary>
+            /// 状態を保持します。型は SessionState で、関連処理から共有される値です。
+            /// </summary>
             public SessionState State;
 
+            /// <summary>
+            /// EndpointAInternalを保持します。型は IPEndPoint で、関連処理から共有される値です。
+            /// </summary>
             public IPEndPoint EndpointA_Internal;
+            /// <summary>
+            /// EndpointAExternalを保持します。型は IPEndPoint で、関連処理から共有される値です。
+            /// </summary>
             public IPEndPoint EndpointA_External;
+            /// <summary>
+            /// EndpointBInternalを保持します。型は IPEndPoint で、関連処理から共有される値です。
+            /// </summary>
             public IPEndPoint EndpointB_Internal;
+            /// <summary>
+            /// EndpointBExternalを保持します。型は IPEndPoint で、関連処理から共有される値です。
+            /// </summary>
             public IPEndPoint EndpointB_External;
+            /// <summary>
+            /// HasAを保持します。型は bool で、関連処理から共有される値です。
+            /// </summary>
             public bool HasA;
+            /// <summary>
+            /// HasBを保持します。型は bool で、関連処理から共有される値です。
+            /// </summary>
             public bool HasB;
 
+            /// <summary>
+            /// InitiatorLinkUpを保持します。型は bool で、関連処理から共有される値です。
+            /// </summary>
             public bool InitiatorLinkUp;
+            /// <summary>
+            /// TargetLinkUpを保持します。型は bool で、関連処理から共有される値です。
+            /// </summary>
             public bool TargetLinkUp;
         }
 
@@ -33,6 +81,9 @@ namespace BasisNetworkServer
         private static readonly ConcurrentDictionary<int, ConcurrentDictionary<string, byte>> _peerSessions = new();
         private static readonly ConcurrentDictionary<long, byte> _offloadedPairs = new();
 
+        /// <summary>
+        /// PackPairを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static long PackPair(int a, int b)
         {
             int lo = a < b ? a : b;
@@ -40,6 +91,9 @@ namespace BasisNetworkServer
             return ((long)lo << 32) | (uint)hi;
         }
 
+        /// <summary>
+        /// IsP2POffloadedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsP2POffloaded(int a, int b)
         {
             if (a == b) return false;
@@ -48,6 +102,9 @@ namespace BasisNetworkServer
 
         private static LiteNatPunchListener _natListener;
 
+        /// <summary>
+        /// Initializeを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void Initialize()
         {
             if (_natListener != null) return;
@@ -72,6 +129,9 @@ namespace BasisNetworkServer
             BNL.Log("[P2P] Broker initialised.");
         }
 
+        /// <summary>
+        /// 処理P2Pメッセージを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleP2PMessage(NetPacketReader reader, NetPeer peer)
         {
             byte sub = reader.GetByte();
@@ -105,6 +165,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// 処理LinkUpを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleLinkUp(NetPeer sender, BasisP2PSignalMessage msg)
         {
             if (!_sessions.TryGetValue(msg.sessionToken, out Session s)) return;
@@ -121,6 +184,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// 処理Requestを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleRequest(NetPeer sender, BasisP2PSignalMessage msg)
         {
             if (string.IsNullOrEmpty(msg.sessionToken))
@@ -166,6 +232,9 @@ namespace BasisNetworkServer
             SendSub(sender, BasisNetworkCommons.P2PSub_ServerArmed, msg.sessionToken, msg.otherPlayerId);
         }
 
+        /// <summary>
+        /// 処理Acceptを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleAccept(NetPeer sender, BasisP2PSignalMessage msg)
         {
             if (!_sessions.TryGetValue(msg.sessionToken, out Session s))
@@ -193,6 +262,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// 処理LinkLostを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleLinkLost(NetPeer sender, BasisP2PSignalMessage msg)
         {
             // session を再 arm し、offload を clear して re-punch window 中に relay を再開する。
@@ -210,6 +282,9 @@ namespace BasisNetworkServer
             ForwardAndDrop(sender, msg, BasisNetworkCommons.P2PSub_LinkLost, dropSession: false);
         }
 
+        /// <summary>
+        /// ForwardAndDropを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void ForwardAndDrop(NetPeer sender, BasisP2PSignalMessage msg, byte sub, bool dropSession = true)
         {
             if (NetworkServer.AuthenticatedPeers.TryGetValue(msg.otherPlayerId, out NetPeer other))
@@ -222,6 +297,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// OnNatIntroductionRequestイベントを受け取り、関連するサーバー状態や送信処理へ反映します。
+        /// </summary>
         private static void OnNatIntroductionRequest(IPEndPoint localEndPoint, IPEndPoint remoteEndPoint, string token)
         {
             if (string.IsNullOrEmpty(token)) return;
@@ -281,12 +359,18 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// Previewを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string Preview(string token)
         {
             if (string.IsNullOrEmpty(token)) return "(empty)";
             return token.Length <= 8 ? token : token.Substring(0, 8);
         }
 
+        /// <summary>
+        /// GetPredictionRangeを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         private static int GetPredictionRange()
         {
             try
@@ -300,6 +384,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// Removeピアを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RemovePeer(int peerId)
         {
             if (!_peerSessions.TryRemove(peerId, out var tokens)) return;
@@ -318,6 +405,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// RemoveSessionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void RemoveSession(string token)
         {
             if (!_sessions.TryRemove(token, out Session s)) return;
@@ -326,12 +416,18 @@ namespace BasisNetworkServer
             _offloadedPairs.TryRemove(PackPair(s.InitiatorPeerId, s.TargetPeerId), out _);
         }
 
+        /// <summary>
+        /// TrackピアSessionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void TrackPeerSession(int peerId, string token)
         {
             var inner = _peerSessions.GetOrAdd(peerId, _ => new ConcurrentDictionary<string, byte>());
             inner[token] = 0;
         }
 
+        /// <summary>
+        /// UntrackピアSessionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void UntrackPeerSession(int peerId, string token)
         {
             if (_peerSessions.TryGetValue(peerId, out var inner))
@@ -340,6 +436,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// SendSubを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         private static void SendSub(NetPeer to, byte sub, string token, ushort otherPlayerId, byte[] ephemeralPublicKey = null)
         {
             NetDataWriter writer = NetworkServer.RentWriter();

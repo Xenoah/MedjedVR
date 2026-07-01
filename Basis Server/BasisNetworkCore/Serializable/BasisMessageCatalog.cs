@@ -1,6 +1,10 @@
 using Basis.Network.Core;
 using System.Collections.Generic;
 
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -17,6 +21,9 @@ public static partial class SerializableBasis
         // core は runtime 中に変わらないため、descriptor array を一度だけ build して read-only で共有する。
         private static volatile BasisMessageDescriptor[] _core;
 
+        /// <summary>
+        /// BuildCoreを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static BasisMessageDescriptor[] BuildCore()
         {
             BasisMessageDescriptor[] cached = _core;

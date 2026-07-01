@@ -26,16 +26,34 @@ namespace BasisNetworkServer.Security
         private static int _maxDatabasePayloadEntries = DefaultMaxDatabasePayloadEntries;
         private static int _maxContentSpheresPerPlayer = DefaultMaxContentSpheresPerPlayer;
 
+        /// <summary>
+        /// MaxデータベースEntriesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int MaxDatabaseEntries => Interlocked.CompareExchange(ref _maxDatabaseEntries, 0, 0);
+        /// <summary>
+        /// MaxデータベースNameLengthを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int MaxDatabaseNameLength => Interlocked.CompareExchange(ref _maxDatabaseNameLength, 0, 0);
+        /// <summary>
+        /// MaxデータベースPayloadEntriesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int MaxDatabasePayloadEntries => Interlocked.CompareExchange(ref _maxDatabasePayloadEntries, 0, 0);
+        /// <summary>
+        /// MaxContentSpheresPerプレイヤーを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int MaxContentSpheresPerPlayer => Interlocked.CompareExchange(ref _maxContentSpheresPerPlayer, 0, 0);
 
+        /// <summary>
+        /// InitializeFrom設定を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void InitializeFromConfig(Configuration config)
         {
             SetLimits(config.MaxDatabaseEntries, config.MaxDatabaseNameLength, config.MaxDatabasePayloadEntries, config.MaxContentSpheresPerPlayer);
         }
 
+        /// <summary>
+        /// SetLimitsを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         public static bool SetLimits(int maxDatabaseEntries, int maxDatabaseNameLength, int maxDatabasePayloadEntries, int maxContentSpheresPerPlayer)
         {
             Sanitize(ref maxDatabaseEntries, ref maxDatabaseNameLength, ref maxDatabasePayloadEntries, ref maxContentSpheresPerPlayer);
@@ -49,6 +67,9 @@ namespace BasisNetworkServer.Security
                 || prevSpheres != maxContentSpheresPerPlayer;
         }
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -63,6 +84,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Broadcast状態を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void BroadcastState()
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -81,6 +105,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Writeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Write(NetDataWriter writer)
         {
             new AdminRequest().Serialize(writer, AdminRequestMode.GlobalGetResourceLimits);
@@ -90,6 +117,9 @@ namespace BasisNetworkServer.Security
             writer.Put(MaxContentSpheresPerPlayer);
         }
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Sanitize(ref int entries, ref int nameLength, ref int payloadEntries, ref int spheres)
         {
             if (entries < 1) entries = DefaultMaxDatabaseEntries;

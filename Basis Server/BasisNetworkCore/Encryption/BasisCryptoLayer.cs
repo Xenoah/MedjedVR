@@ -25,7 +25,13 @@ namespace Basis.Network.Core
 	///   [8 bytes  : little-endian nonce counter]
 	public sealed class BasisCryptoLayer : PacketLayerBase
 	{
+		/// <summary>
+		/// CounterSizeを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public const int CounterSize = 8;
+		/// <summary>
+		/// Overheadを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public const int Overhead = BasisAeadCipher.TagSize + CounterSize;
 
 		private const byte PropertyMask = 0x1F;
@@ -34,10 +40,23 @@ namespace Basis.Network.Core
 		private const byte PropChanneled = 1;
 		private const byte PropMerged = 12;
 
+		/// <summary>
+		/// Sessionの責務をまとめるクラスです。
+		/// Encryption領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+		/// </summary>
 		private sealed class Session
 		{
+			/// <summary>
+			/// Sendを保持します。型は BasisAeadCipher で、関連処理から共有される値です。
+			/// </summary>
 			public BasisAeadCipher Send = null!;
+			/// <summary>
+			/// Recvを保持します。型は BasisAeadCipher で、関連処理から共有される値です。
+			/// </summary>
 			public BasisAeadCipher Recv = null!;
+			/// <summary>
+			/// SendCounterを保持します。型は long で、関連処理から共有される値です。
+			/// </summary>
 			public long SendCounter;
 		}
 
@@ -49,10 +68,20 @@ namespace Basis.Network.Core
 
 		public BasisCryptoLayer() : base(Overhead) { }
 
+		/// <summary>
+		/// EndpointComparerの責務をまとめるクラスです。
+		/// Encryption領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+		/// </summary>
 		private sealed class EndpointComparer : IEqualityComparer<IPEndPoint>
 		{
+			/// <summary>
+			/// Instanceを保持します。型は EndpointComparer で、関連処理から共有される値です。
+			/// </summary>
 			public static readonly EndpointComparer Instance = new EndpointComparer();
 
+			/// <summary>
+			/// Equalsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+			/// </summary>
 			public bool Equals(IPEndPoint x, IPEndPoint y)
 			{
 				if (ReferenceEquals(x, y)) return true;
@@ -60,6 +89,9 @@ namespace Basis.Network.Core
 				return x.Port == y.Port && x.Address.Equals(y.Address);
 			}
 
+			/// <summary>
+			/// GetHashCodeを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+			/// </summary>
 			public int GetHashCode(IPEndPoint ep)
 			{
 				if (ep is null) return 0;
@@ -67,6 +99,9 @@ namespace Basis.Network.Core
 			}
 		}
 
+		/// <summary>
+		/// SessionCountを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public int SessionCount => _sessions.Count;
 
 		/// <param name="initialSendCounter">
@@ -89,17 +124,26 @@ namespace Basis.Network.Core
 
 		public bool HasEndpoint(IPEndPoint endpoint) => endpoint != null && _sessions.ContainsKey(endpoint);
 
+		/// <summary>
+		/// RemoveEndpointを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		public void RemoveEndpoint(IPEndPoint endpoint)
 		{
 			if (endpoint != null && _sessions.TryRemove(endpoint, out var session)) DisposeSession(session);
 		}
 
+		/// <summary>
+		/// RemapEndpointを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		public void RemapEndpoint(IPEndPoint oldEndpoint, IPEndPoint newEndpoint)
 		{
 			if (oldEndpoint == null || newEndpoint == null) return;
 			if (_sessions.TryRemove(oldEndpoint, out var session)) _sessions[newEndpoint] = session;
 		}
 
+		/// <summary>
+		/// ProcessOutBoundパケットを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+		/// </summary>
 		public override void ProcessOutBoundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int offset, ref int length)
 		{
 			if (length < 1) return;
@@ -117,6 +161,9 @@ namespace Basis.Network.Core
 			length += Overhead;
 		}
 
+		/// <summary>
+		/// ProcessInboundパケットを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+		/// </summary>
 		public override void ProcessInboundPacket(ref IPEndPoint endPoint, ref byte[] data, ref int length)
 		{
 			if (length < 1) return;
@@ -145,15 +192,24 @@ namespace Basis.Network.Core
 			length -= Overhead;
 		}
 
+		/// <summary>
+		/// IsEncryptableを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static bool IsEncryptable(byte property)
 			=> property == PropUnreliable || property == PropChanneled || property == PropMerged;
 
+		/// <summary>
+		/// DisposeSessionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static void DisposeSession(Session session)
 		{
 			session.Send.Dispose();
 			session.Recv.Dispose();
 		}
 
+		/// <summary>
+		/// WriteCounterを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static void WriteCounter(Span<byte> nonce, long counter)
 		{
 			nonce.Clear();
@@ -168,6 +224,9 @@ namespace Basis.Network.Core
 			nonce[7] = (byte)(c >> 56);
 		}
 
+		/// <summary>
+		/// WriteCounterBytesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static void WriteCounterBytes(byte[] buffer, int offset, long counter)
 		{
 			ulong c = (ulong)counter;
@@ -181,6 +240,9 @@ namespace Basis.Network.Core
 			buffer[offset + 7] = (byte)(c >> 56);
 		}
 
+		/// <summary>
+		/// ReadCounterBytesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static long ReadCounterBytes(byte[] buffer, int offset)
 		{
 			ulong c = buffer[offset]

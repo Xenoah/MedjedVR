@@ -13,9 +13,15 @@ namespace BasisNetworkServer.Security
     /// </summary>
     public static class BasisOpusFrameDurationStateManager
     {
+        /// <summary>
+        /// DefaultMsを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int DefaultMs = 20;
         private static int _frameDurationMs = DefaultMs;
 
+        /// <summary>
+        /// FrameDurationMsを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int FrameDurationMs => Interlocked.CompareExchange(ref _frameDurationMs, 0, 0);
 
         public static bool IsAcceptedDuration(int ms) => ms == 20 || ms == 40;
@@ -28,6 +34,9 @@ namespace BasisNetworkServer.Security
             return previous != ms;
         }
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -43,6 +52,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Broadcast状態を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void BroadcastState()
         {
             NetDataWriter writer = NetworkServer.RentWriter();

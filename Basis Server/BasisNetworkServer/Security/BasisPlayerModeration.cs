@@ -17,14 +17,25 @@ using static BasisPermissions.PermissionManager;
 
 namespace BasisNetworkServer.Security
 {
+    /// <summary>
+    /// BasisプレイヤーModerationの責務をまとめるクラスです。
+    /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisPlayerModeration
     {
         private static readonly ConcurrentDictionary<string, BannedPlayer> BannedPlayers = new();
         private static readonly ConcurrentDictionary<string, byte> BannedUUIDs = new();
         private static readonly string BanFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Configuration.ConfigFolderName, "banned_players.xml");
 
+        /// <summary>
+        /// UseFileOnDiscを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool UseFileOnDisc = true;
 
+        /// <summary>
+        /// Bannedプレイヤーの責務をまとめるクラスです。
+        /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public class BannedPlayer
         {
             public string UUID { get; set; }
@@ -64,6 +75,9 @@ namespace BasisNetworkServer.Security
             return $"Player {UUID} banned.";
         }
 
+        /// <summary>
+        /// IpBanを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string IpBan(string UUID, string reason)
         {
             if (!ValidateTarget(UUID, reason, out var peer, out var error))
@@ -91,6 +105,9 @@ namespace BasisNetworkServer.Security
             return $"Player {UUID} and IP {ip} banned.";
         }
 
+        /// <summary>
+        /// Kickを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string Kick(string UUID, string reason)
         {
             if (!ValidateTarget(UUID, reason, out var peer, out var error))
@@ -103,6 +120,9 @@ namespace BasisNetworkServer.Security
             return $"Player {UUID} kicked.";
         }
 
+        /// <summary>
+        /// ValidateTargetを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool ValidateTarget(string UUID, string reason, out NetPeer peer, out string error)
         {
             peer = null;
@@ -130,6 +150,9 @@ namespace BasisNetworkServer.Security
             return true;
         }
 
+        /// <summary>
+        /// IsProtectedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool IsProtected(string uuid)
         {
             return PermissionIntegration.Manager.Has(uuid, PermNodes.protection);
@@ -154,6 +177,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// 読み込みBannedPlayersを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void LoadBannedPlayers()
         {
             if (!File.Exists(BanFilePath))
@@ -184,6 +210,9 @@ namespace BasisNetworkServer.Security
 
         public static bool IsBanned(string UUID) => BannedUUIDs.ContainsKey(UUID);
 
+        /// <summary>
+        /// Unbanを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool Unban(string UUID)
         {
             if (!BannedUUIDs.ContainsKey(UUID))
@@ -195,6 +224,9 @@ namespace BasisNetworkServer.Security
             return true;
         }
 
+        /// <summary>
+        /// UnbanIpを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool UnbanIp(string ip)
         {
             var list = BannedPlayers.Values.Where(p => p.HasBannedIp && p.BannedIp == ip).ToList();
@@ -496,6 +528,9 @@ namespace BasisNetworkServer.Security
             return $"Server name set to '{newName}'.";
         }
 
+        /// <summary>
+        /// ApplyサーバーMotdを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyServerMotd(string newMotd)
         {
             if (newMotd == null) newMotd = string.Empty;
@@ -506,6 +541,9 @@ namespace BasisNetworkServer.Security
             return "Server MOTD updated.";
         }
 
+        /// <summary>
+        /// ApplyAllowlistModeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyAllowlistMode(byte mode)
         {
             BasisUserRestrictionMode parsed = (BasisUserRestrictionMode)mode;
@@ -524,6 +562,9 @@ namespace BasisNetworkServer.Security
             return $"Restriction mode set to {parsed}.";
         }
 
+        /// <summary>
+        /// ApplyAllowlistAddを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyAllowlistAdd(string uuid)
         {
             if (string.IsNullOrWhiteSpace(uuid)) return "UUID was empty.";
@@ -534,6 +575,9 @@ namespace BasisNetworkServer.Security
             return $"Added {uuid} to allowlist.";
         }
 
+        /// <summary>
+        /// ApplyAllowlistRemoveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyAllowlistRemove(string uuid)
         {
             if (string.IsNullOrWhiteSpace(uuid)) return "UUID was empty.";
@@ -542,6 +586,9 @@ namespace BasisNetworkServer.Security
             return $"Removed {uuid} from allowlist.";
         }
 
+        /// <summary>
+        /// ApplyAddDefaultライブラリItemを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyAddDefaultLibraryItem(byte mode, string url, string password)
         {
             if (string.IsNullOrWhiteSpace(url)) return "URL was empty.";
@@ -589,6 +636,9 @@ namespace BasisNetworkServer.Security
             return $"Default library entry added ({Path.GetFileName(written)}).";
         }
 
+        /// <summary>
+        /// ApplyRemoveDefaultライブラリItemを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ApplyRemoveDefaultLibraryItem(string url)
         {
             if (string.IsNullOrWhiteSpace(url)) return "URL was empty.";
@@ -603,6 +653,9 @@ namespace BasisNetworkServer.Security
             return $"Removed {removed} default library entry(ies) for URL '{url}'.";
         }
 
+        /// <summary>
+        /// Save設定を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void SaveConfig()
         {
             try
@@ -630,6 +683,9 @@ namespace BasisNetworkServer.Security
             action();
         }
 
+        /// <summary>
+        /// 処理権限Editを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePermissionEdit(AdminRequestMode mode, NetPeer peer, NetPacketReader reader)
         {
             switch (mode)
@@ -662,6 +718,9 @@ namespace BasisNetworkServer.Security
             SendBackMessage(peer, "Permission updated");
         }
 
+        /// <summary>
+        /// 処理GetPermissionsを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleGetPermissions(NetPeer peer)
         {
             var snap = PermissionIntegration.Manager.Snapshot();
@@ -707,6 +766,9 @@ namespace BasisNetworkServer.Security
             NetworkServer.ReturnWriter(writer);
         }
 
+        /// <summary>
+        /// 処理ShoutModeを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleShoutMode(NetPeer peer, NetPacketReader reader, bool enable)
         {
             ushort id = reader.GetUShort();
@@ -714,6 +776,9 @@ namespace BasisNetworkServer.Security
             BasisServerHandle.BasisServerHandleEvents.BroadcastShoutModeState(id, enable, (ushort)peer.Id);
         }
 
+        /// <summary>
+        /// 処理CrashReportingSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleCrashReportingSet(NetPeer peer, NetPacketReader reader)
         {
             bool enabled = reader.GetBool();
@@ -724,6 +789,9 @@ namespace BasisNetworkServer.Security
             SendBackMessage(peer, $"Crash reporting {(enabled ? "ENABLED" : "DISABLED")}.");
         }
 
+        /// <summary>
+        /// 処理AudioRangeLimitsSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleAudioRangeLimitsSet(NetPeer peer, NetPacketReader reader)
         {
             float microphoneMeters = reader.GetFloat();
@@ -736,6 +804,9 @@ namespace BasisNetworkServer.Security
             SendBackMessage(peer, $"Audio range limits set: microphone {NetworkServer.Configuration.MaxMicrophoneRangeMeters} m, hearing {NetworkServer.Configuration.MaxHearingRangeMeters} m.");
         }
 
+        /// <summary>
+        /// 処理PlayspaceMoverToggleを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandlePlayspaceMoverToggle(NetPeer peer)
         {
             bool locked = BasisGlobalLockManager.TogglePlayspaceMover();
@@ -745,6 +816,9 @@ namespace BasisNetworkServer.Security
                 $"The playspace mover has been globally {state} for non-admins by an admin.");
         }
 
+        /// <summary>
+        /// 処理DirectConnectToggleを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleDirectConnectToggle(NetPeer peer)
         {
             bool locked = BasisGlobalLockManager.ToggleDirectConnect();
@@ -754,6 +828,9 @@ namespace BasisNetworkServer.Security
                 $"Direct (peer-to-peer) connections have been globally {state} for non-admins by an admin.");
         }
 
+        /// <summary>
+        /// 処理アバターScaleLimitsSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleAvatarScaleLimitsSet(NetPeer peer, NetPacketReader reader)
         {
             float minMeters = reader.GetFloat();
@@ -766,6 +843,9 @@ namespace BasisNetworkServer.Security
             SendBackMessage(peer, $"Avatar scale limits set: {NetworkServer.Configuration.MinAvatarEyeHeightMeters} m .. {NetworkServer.Configuration.MaxAvatarEyeHeightMeters} m.");
         }
 
+        /// <summary>
+        /// 処理リソースLimitsSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleResourceLimitsSet(NetPeer peer, NetPacketReader reader)
         {
             int maxDatabaseEntries = reader.GetInt();
@@ -800,6 +880,9 @@ namespace BasisNetworkServer.Security
             BasisGlobalLockManager.BroadcastLockState();
         }
 
+        /// <summary>
+        /// 処理GlobalToggleを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleGlobalToggle(NetPeer peer, string contentType, bool nowLocked)
         {
             string state = nowLocked ? "DISABLED" : "ENABLED";
@@ -820,6 +903,9 @@ namespace BasisNetworkServer.Security
             BasisGlobalLockManager.BroadcastLockState();
         }
 
+        /// <summary>
+        /// 処理HeadlessAudioSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleHeadlessAudioSet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 1)
@@ -840,6 +926,9 @@ namespace BasisNetworkServer.Security
             BasisHeadlessAudioStateManager.BroadcastState();
         }
 
+        /// <summary>
+        /// 処理HeadlessDisallowSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleHeadlessDisallowSet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 1)
@@ -866,6 +955,9 @@ namespace BasisNetworkServer.Security
             BasisHeadlessConnectionPolicyManager.BroadcastState();
         }
 
+        /// <summary>
+        /// 処理OpusパケットLossSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleOpusPacketLossSet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 1)
@@ -886,6 +978,9 @@ namespace BasisNetworkServer.Security
             BasisOpusPacketLossStateManager.BroadcastState();
         }
 
+        /// <summary>
+        /// 処理カメラPolicySetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleCameraPolicySet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 1)
@@ -901,6 +996,9 @@ namespace BasisNetworkServer.Security
             BasisGlobalLockManager.BroadcastLockState();
         }
 
+        /// <summary>
+        /// 処理UserOpusBitrateSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleUserOpusBitrateSet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 6) // ushort + int
@@ -927,6 +1025,9 @@ namespace BasisNetworkServer.Security
             SendBackMessage(peer, notification);
         }
 
+        /// <summary>
+        /// 処理OpusFrameDurationSetを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleOpusFrameDurationSet(NetPeer peer, NetPacketReader reader)
         {
             if (reader.AvailableBytes < 1)
@@ -953,6 +1054,9 @@ namespace BasisNetworkServer.Security
             BasisOpusFrameDurationStateManager.BroadcastState();
         }
 
+        /// <summary>
+        /// SendBackメッセージを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendBackMessage(NetPeer peer, string msg)
         {
             if (string.IsNullOrEmpty(msg))
@@ -966,6 +1070,9 @@ namespace BasisNetworkServer.Security
             NetworkServer.TrySend(peer, writer, BasisNetworkCommons.AdminChannel, DeliveryMethod.ReliableOrdered);
             NetworkServer.ReturnWriter(writer);
         }
+        /// <summary>
+        /// GetBannedReasonを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static bool GetBannedReason(string UUID, out string reason)
         {
             if (BannedPlayers.TryGetValue(UUID, out BannedPlayer player))
@@ -977,6 +1084,9 @@ namespace BasisNetworkServer.Security
             reason = string.Empty;
             return false;
         }
+        /// <summary>
+        /// IsIpBannedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsIpBanned(string ip)
         {
             if (string.IsNullOrWhiteSpace(ip))

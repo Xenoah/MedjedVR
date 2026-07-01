@@ -4,12 +4,22 @@ using System.Threading;
 
 namespace Basis.Network.Server
 {
+    /// <summary>
+    /// Basis統計の責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisStatistics
     {
+        /// <summary>
+        /// 管理を保持します。型は NetManager で、関連処理から共有される値です。
+        /// </summary>
         public static NetManager Manager;
         private static Thread workerThread;
         private static volatile bool keepPolling = true; // thread lifecycle の制御に使う
 
+        /// <summary>
+        /// StartWorkerThreadを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public static void StartWorkerThread(NetManager manager)
         {
           //  Manager = manager;
@@ -20,6 +30,9 @@ namespace Basis.Network.Server
           //  workerThread.Start();
         }
 
+        /// <summary>
+        /// StopWorkerThreadを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public static void StopWorkerThread()
         {
           //  keepPolling = false;
@@ -31,6 +44,9 @@ namespace Basis.Network.Server
            // }
         }
 
+        /// <summary>
+        /// Poll統計を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void PollStatistics()
         {
            /// while (keepPolling)
@@ -43,6 +59,9 @@ namespace Basis.Network.Server
         //    }
         }
 
+        /// <summary>
+        /// PollLatest統計を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void PollLatestStatistics()
         {
         //  BNL.Log("Packet Loss: " + Manager.Statistics.PacketLoss + "Packet Loss Percent: " + Manager.Statistics.PacketLossPercent + "Bytes Received: " + Manager.Statistics.BytesReceived + "Bytes Sent: " + Manager.Statistics.BytesSent + "Packets Sent: " + Manager.Statistics.PacketsSent);

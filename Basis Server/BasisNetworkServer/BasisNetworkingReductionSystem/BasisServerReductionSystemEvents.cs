@@ -17,10 +17,23 @@ using static Basis.Network.Core.Compression.BasisAvatarBitPacking;
 
 namespace BasisNetworkServer.BasisNetworkingReductionSystem
 {
+    /// <summary>
+    /// Queuedメッセージの責務をまとめるクラスです。
+    /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class QueuedMessage
     {
+        /// <summary>
+        /// Fromピアを保持します。型は NetPeer で、関連処理から共有される値です。
+        /// </summary>
         public NetPeer FromPeer;
+        /// <summary>
+        /// Sequenceを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte Sequence;
+        /// <summary>
+        /// アバターメッセージを保持します。型は LocalAvatarSyncMessage で、関連処理から共有される値です。
+        /// </summary>
         public LocalAvatarSyncMessage AvatarMessage;
     }
 
@@ -32,10 +45,25 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
     /// </summary>
     public struct PendingAvatarSend
     {
+        /// <summary>
+        /// Sourceを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public byte[] Source;
+        /// <summary>
+        /// Lengthを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int Length;
+        /// <summary>
+        /// Channelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte Channel;
+        /// <summary>
+        /// Intervalを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte Interval;
+        /// <summary>
+        /// IntervalOffsetを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte IntervalOffset; // 1 for byte-id, 2 for ushort-id
     }
 
@@ -45,18 +73,40 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
     /// </summary>
     public struct PeerTrackingData
     {
+        /// <summary>
+        /// LastSentTimeを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public long LastSentTime;
+        /// <summary>
+        /// LastSeenGenerationを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public long LastSeenGeneration;
         // slow distance loop (~2Hz) で cache し、fast send loop (~250Hz) で読む。
         // hot path から per-pair distance math を取り除く。
         public long CachedIntervalTicks;
+        /// <summary>
+        /// CachedQualityIndexを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte CachedQualityIndex;
+        /// <summary>
+        /// CachedIntervalByteを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte CachedIntervalByte;
     }
 
+    /// <summary>
+    /// プレイヤー状態の責務をまとめるクラスです。
+    /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class PlayerState
     {
+        /// <summary>
+        /// ピアを保持します。型は NetPeer で、関連処理から共有される値です。
+        /// </summary>
         public NetPeer Peer;
+        /// <summary>
+        /// IsActiveを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool IsActive;
 
         // distance decision に使う。
@@ -81,12 +131,24 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // AvatarHigh は自身の byte[] を所有し、QueuedMessagePool と共有しない。
         // これにより、pool reuse が muscle-change comparison を静かに壊すことを防ぐ。
         public LocalAvatarSyncMessage AvatarHigh;
+        /// <summary>
+        /// アバターMediumを保持します。型は LocalAvatarSyncMessage で、関連処理から共有される値です。
+        /// </summary>
         public LocalAvatarSyncMessage AvatarMedium;
+        /// <summary>
+        /// アバターLowを保持します。型は LocalAvatarSyncMessage で、関連処理から共有される値です。
+        /// </summary>
         public LocalAvatarSyncMessage AvatarLow;
+        /// <summary>
+        /// アバターVeryLowを保持します。型は LocalAvatarSyncMessage で、関連処理から共有される値です。
+        /// </summary>
         public LocalAvatarSyncMessage AvatarVeryLow;
 
         // unreliable client->server packet 用の inbound sequence tracking。
         public byte LastInboundSequence;
+        /// <summary>
+        /// HasReceivedFirstを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool HasReceivedFirst;
 
         // pre-serialized data に stamp する outbound sequence (新しい avatar update ごとに increment)。
@@ -98,6 +160,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // interval byte offset は SmallId に依存する (byte なら 1、ushort なら 2)。
         // quality は channel number から derive され、payload には保存しない。
         public byte[][] SerializedKeyframe = new byte[4][];
+        /// <summary>
+        /// SerializedKeyframeLengthを保持します。型は int[] で、関連処理から共有される値です。
+        /// </summary>
         public int[] SerializedKeyframeLength = new int[4];
 
         // playerID が byte に収まる場合 true (<=255)。creation 時に一度だけ設定する。
@@ -117,11 +182,17 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // ここへ write するのはこの player 自身の receive thread (Parallel.For body 1 つ) だけなので、
         // synchronization は不要。
         public PendingAvatarSend[] PendingSends;
+        /// <summary>
+        /// PendingCountを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int PendingCount;
 
         // この receiver へ compressed bundle を emit するとき tick 間で再利用する scratch buffer。
         // deflate path の per-tick allocation を避ける。size は flush logic が決める。
         public byte[] BundleRawScratch;
+        /// <summary>
+        /// BundleCompressedScratchを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public byte[] BundleCompressedScratch;
 
         // この receiver の bundle で観測した compressed/raw ratio の EMA。
@@ -130,6 +201,10 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         public float LastBundleRatio;
     }
 
+    /// <summary>
+    /// Basisサーバー削減Systemイベントの責務をまとめるクラスです。
+    /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public partial class BasisServerReductionSystemEvents
     {
         private static readonly CancellationTokenSource cts = new();
@@ -142,13 +217,25 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount - 1)
         };
 
+        /// <summary>
+        /// playerStatesを保持します。型は ShardedConcurrentDictionary<PlayerState> で、関連処理から共有される値です。
+        /// </summary>
         public static ShardedConcurrentDictionary<PlayerState> playerStates = new();
         // double-buffered message dictionary。tick ごとに allocate せず、swap と clear を行う。
         private static ShardedConcurrentDictionary<QueuedMessage> currentMessages = new();
         private static ShardedConcurrentDictionary<QueuedMessage> _backMessages = new();
 
+        /// <summary>
+        /// BSRBaseMultiplierを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float BSRBaseMultiplier = 1.0f;
+        /// <summary>
+        /// BSRSIncreaseRateを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float BSRSIncreaseRate = 0.01f;
+        /// <summary>
+        /// BSRSMillisecondDefaultIntervalを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int BSRSMillisecondDefaultInterval = 50;
 
         // compressed avatar bundle settings (NetworkServer.InitializePulseSettings から書かれる)。
@@ -156,7 +243,13 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // CompressedAvatarBundleChannel 上の 1 つの deflated bundle または
         // original quality channel 上の個別 SendUnreliableRawMerge call として flush する。
         public static bool EnableAvatarBundleCompression = true;
+        /// <summary>
+        /// アバターBundleMinMessagesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int AvatarBundleMinMessages = 4;
+        /// <summary>
+        /// アバターBundleMinBytesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int AvatarBundleMinBytes = 300;
         // compressed bundle が single UDP datagram に収まるか確認する前に peer.Mtu から引く conservative headroom。
         // LiteNetLib unreliable header、optional packet-layer header、merge length prefix を見込む。
@@ -197,9 +290,18 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
 
         // distance -> quality threshold (squared meters)
         public static float HighDistanceSq = 100f;      // 10m
+        /// <summary>
+        /// MediumDistanceSqを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float MediumDistanceSq = 900f;    // 30m
+        /// <summary>
+        /// LowDistanceSqを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float LowDistanceSq = 2500f;      // 50m
 
+        /// <summary>
+        /// intervalMsを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long intervalMs = 4;
         // server が空のときの fallback wake。実際の wake は _tickWake.Set() が行う。
         private const int IdleWaitMs = 250;
@@ -220,6 +322,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // 4ms tick interval では 125 ticks = 約 500ms。6m/s の player はその間に 3m 移動するが、
         // quality threshold (3m/10m/20m) ひとつ分に収まるため、許容できる stale さ。
         private static int _distanceTickCounter = 0;
+        /// <summary>
+        /// DistanceUpdateIntervalTicksを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int DistanceUpdateIntervalTicks = 125;
 
         // position-only fast path (repack skip) 用に muscle+tail byte count を cache する。
@@ -241,6 +346,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         [DllImport("winmm.dll", EntryPoint = "timeBeginPeriod")]
         private static extern uint timeBeginPeriod(uint uMilliseconds);
 
+        /// <summary>
+        /// Basisサーバー削減Systemイベントを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisServerReductionSystemEvents()
         {
             // Windows で WaitOne が約 4ms の accuracy を保てるよう、OS timer を 1ms に上げる
@@ -263,6 +371,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             thread.Start();
         }
 
+        /// <summary>
+        /// 処理アバターMovementを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleAvatarMovement(NetPacketReader reader, NetPeer fromPeer, byte channel)
         {
             // client が先頭に付けた application-level sequence byte を読む。
@@ -302,6 +413,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             if (Volatile.Read(ref _activePlayerCount) == 0) _tickWake.Set();
         }
 
+        /// <summary>
+        /// Addメッセージを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void AddMessage(NetPeer fromPeer, LocalAvatarSyncMessage localMessage, byte sequence)
         {
             var message = QueuedMessagePool.Rent();
@@ -369,6 +483,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             }
         }
 
+        /// <summary>
+        /// RunTickを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void RunTick(long startTick)
         {
             bool profiling = BSRProfiler.Enabled;
@@ -441,6 +558,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             }
         }
 
+        /// <summary>
+        /// ProcessPendingRemovalsを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void ProcessPendingRemovals()
         {
             while (playersToRemove.TryDequeue(out int id))
@@ -500,6 +620,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             }
         }
 
+        /// <summary>
+        /// UpdateDistanceCacheを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void UpdateDistanceCache()
         {
             if (_activePlayersDirty)
@@ -583,6 +706,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             });
         }
 
+        /// <summary>
+        /// UpdateCommunicationAndDistancesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void UpdateCommunicationAndDistances(long nowTicks)
         {
             // double-buffered snapshot: dirty のときだけ rebuild する。
@@ -920,6 +1046,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// PickChunkEndを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int PickChunkEnd(PendingAvatarSend[] pending, int cursor, int hardEnd, int targetRaw)
         {
             int chunkEnd = cursor;
@@ -1036,6 +1165,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// UpdateRatioEMAを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void UpdateRatioEMA(ref float ema, int compressed, int raw, float weightOnObserved)
         {
             if (raw <= 0) return;
@@ -1052,6 +1184,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         /// parallel send loop thread から CAS で lock-free に呼ばれる。
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// MarkQualityUsedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void MarkQualityUsed(ref int usedQualities, int qi)
         {
             int bit = 1 << qi;
@@ -1075,6 +1210,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         /// squared distance を quality index へ map する (BitQuality enum value と一致)。
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// GetQualityIndexを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         private static int GetQualityIndex(float distSq)
         {
             if (distSq <= HighDistanceSq) return 3;   // High
@@ -1083,6 +1221,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             return 0;                                   // VeryLow
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// CalculateIntervalFromDistanceSqを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void CalculateIntervalFromDistanceSq(float distanceSq, out byte offsetByte, out int actualInterval)
         {
             int rawInterval = (int)(BSRSMillisecondDefaultInterval * (BSRBaseMultiplier + (distanceSq * BSRSIncreaseRate)));
@@ -1092,12 +1233,18 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             actualInterval = offsetByte + BSRSMillisecondDefaultInterval;
         }
 
+        /// <summary>
+        /// Shutdownを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Shutdown()
         {
             cts.Cancel();
             _tickWake.Set();
         }
 
+        /// <summary>
+        /// Removeプレイヤーを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RemovePlayer(int id)
         {
             playersToRemove.Enqueue(id);
@@ -1146,6 +1293,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
                 Buffer.BlockCopy(highArray, 0, veryLow.array, 0, WritePosition);
         }
 
+        /// <summary>
+        /// Processメッセージを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void ProcessMessage(QueuedMessage message)
         {
             if (message.FromPeer == null)
@@ -1435,6 +1585,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             }
         }
 
+        /// <summary>
+        /// PreSerializeKeyframeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void PreSerializeKeyframe(PlayerState state, int qi, LocalAvatarSyncMessage msg, ushort playerId)
         {
             if (msg.array == null)
@@ -1558,9 +1711,15 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         private readonly ConcurrentDictionary<int, TValue>[] _shards;
         private readonly int _mask;
 
+        /// <summary>
+        /// ShardedConcurrentDictionaryを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public ShardedConcurrentDictionary()
             : this(NextPowerOfTwo(Math.Max(1, Environment.ProcessorCount))) { }
 
+        /// <summary>
+        /// ShardedConcurrentDictionaryを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public ShardedConcurrentDictionary(int shardCount)
         {
             if (shardCount <= 0 || (shardCount & (shardCount - 1)) != 0)
@@ -1578,6 +1737,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // scrambling なしでは low-bit masking により id 0..N-1 がすべて shard 0 へ hash され、
         // shard split の意味が完全になくなる。
         [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Scrambleを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int Scramble(int key)
         {
             unchecked
@@ -1601,11 +1763,17 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             set => ShardOf(key)[key] = value;
         }
 
+        /// <summary>
+        /// Clearを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Clear()
         {
             for (int i = 0; i < _shards.Length; i++) _shards[i].Clear();
         }
 
+        /// <summary>
+        /// GetEnumeratorを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int, TValue>> GetEnumerator()
         {
             for (int i = 0; i < _shards.Length; i++)
@@ -1616,6 +1784,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 
+        /// <summary>
+        /// NextPowerOfTwoを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int NextPowerOfTwo(int x)
         {
             if (x <= 1) return 1;

@@ -1,5 +1,9 @@
 using Basis.Network.Core;
 
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -48,9 +52,18 @@ public static partial class SerializableBasis
         /// sphere が drop された world position。
         /// </summary>
         public float PositionX;
+        /// <summary>
+        /// PositionYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionY;
+        /// <summary>
+        /// PositionZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionZ;
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             SphereNetID = reader.GetString();
@@ -62,6 +75,9 @@ public static partial class SerializableBasis
             PositionZ = reader.GetFloat();
         }
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(SphereNetID);
@@ -80,11 +96,26 @@ public static partial class SerializableBasis
     /// </summary>
     public struct ServerContentShareMessage
     {
+        /// <summary>
+        /// playerIdメッセージを保持します。型は PlayerIdMessage で、関連処理から共有される値です。
+        /// </summary>
         public PlayerIdMessage playerIdMessage;
+        /// <summary>
+        /// SharerUUIDを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string SharerUUID;
+        /// <summary>
+        /// SharerDisplayNameを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string SharerDisplayName;
+        /// <summary>
+        /// contentShareメッセージを保持します。型は ContentShareMessage で、関連処理から共有される値です。
+        /// </summary>
         public ContentShareMessage contentShareMessage;
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             playerIdMessage.Deserialize(reader);
@@ -93,6 +124,9 @@ public static partial class SerializableBasis
             contentShareMessage.Deserialize(reader);
         }
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             playerIdMessage.Serialize(writer);
@@ -107,13 +141,22 @@ public static partial class SerializableBasis
     /// </summary>
     public struct ContentShareCleanupMessage
     {
+        /// <summary>
+        /// SphereNetIDを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string SphereNetID;
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             SphereNetID = reader.GetString();
         }
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(SphereNetID);
@@ -125,15 +168,27 @@ public static partial class SerializableBasis
     /// </summary>
     public struct ServerContentShareCleanupMessage
     {
+        /// <summary>
+        /// playerIdメッセージを保持します。型は PlayerIdMessage で、関連処理から共有される値です。
+        /// </summary>
         public PlayerIdMessage playerIdMessage;
+        /// <summary>
+        /// contentShareCleanupメッセージを保持します。型は ContentShareCleanupMessage で、関連処理から共有される値です。
+        /// </summary>
         public ContentShareCleanupMessage contentShareCleanupMessage;
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             playerIdMessage.Deserialize(reader);
             contentShareCleanupMessage.Deserialize(reader);
         }
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             playerIdMessage.Serialize(writer);

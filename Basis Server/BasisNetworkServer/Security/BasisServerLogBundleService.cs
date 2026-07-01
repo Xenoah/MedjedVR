@@ -36,6 +36,9 @@ namespace BasisNetworkServer.Security
         /// <summary>assembled (raw) container の hard ceiling。ここまで大きい log はほぼ確実に異常なので、link を flood せず拒否する。</summary>
         private const long MaxRawBytes = 256L * 1024 * 1024;
 
+        /// <summary>
+        /// SendAllLogsToピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendAllLogsToPeer(NetPeer peer)
         {
             if (peer == null) return;
@@ -50,6 +53,9 @@ namespace BasisNetworkServer.Security
             _ = Task.Run(() => BuildAndSend(peer));
         }
 
+        /// <summary>
+        /// DeleteAllLogsForピアを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void DeleteAllLogsForPeer(NetPeer peer)
         {
             if (peer == null) return;
@@ -64,6 +70,9 @@ namespace BasisNetworkServer.Security
             _ = Task.Run(() => DeleteAll(peer));
         }
 
+        /// <summary>
+        /// DeleteAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void DeleteAll(NetPeer peer)
         {
             try
@@ -89,6 +98,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// DeleteDirectoryFilesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int DeleteDirectoryFiles(string sourceDir)
         {
             if (string.IsNullOrEmpty(sourceDir) || !Directory.Exists(sourceDir)) return 0;
@@ -110,6 +122,9 @@ namespace BasisNetworkServer.Security
             return deleted;
         }
 
+        /// <summary>
+        /// BuildAndSendを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void BuildAndSend(NetPeer peer)
         {
             try
@@ -159,6 +174,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// BuildContainerを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static byte[] BuildContainer(string logsDir, string crashDir, out int fileCount)
         {
             using MemoryStream memory = new MemoryStream();
@@ -185,6 +203,9 @@ namespace BasisNetworkServer.Security
             return memory.ToArray();
         }
 
+        /// <summary>
+        /// AddDirectoryを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int AddDirectory(BinaryWriter writer, string sourceDir, string entryPrefix)
         {
             if (string.IsNullOrEmpty(sourceDir) || !Directory.Exists(sourceDir)) return 0;
@@ -219,6 +240,9 @@ namespace BasisNetworkServer.Security
             return buffer.ToArray();
         }
 
+        /// <summary>
+        /// Compressを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static byte[] Compress(byte[] raw, out bool isCompressed)
         {
             try
@@ -254,6 +278,9 @@ namespace BasisNetworkServer.Security
             return Path.GetFileName(fullPath);
         }
 
+        /// <summary>
+        /// SendBeginを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         private static void SendBegin(NetPeer peer, string serverNameSafe, string fileName, bool isCompressed, int payloadBytes, int rawBytes, int totalChunks)
         {
             NetDataWriter writer = new NetDataWriter();
@@ -267,6 +294,9 @@ namespace BasisNetworkServer.Security
             NetworkServer.TrySend(peer, writer, BasisNetworkCommons.AdminChannel, DeliveryMethod.ReliableOrdered);
         }
 
+        /// <summary>
+        /// SendChunkを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         private static void SendChunk(NetPeer peer, int chunkIndex, byte[] data)
         {
             NetDataWriter writer = new NetDataWriter();
@@ -276,6 +306,9 @@ namespace BasisNetworkServer.Security
             NetworkServer.TrySend(peer, writer, BasisNetworkCommons.AdminChannel, DeliveryMethod.ReliableOrdered);
         }
 
+        /// <summary>
+        /// SendEndを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         private static void SendEnd(NetPeer peer, bool ok, string message)
         {
             NetDataWriter writer = new NetDataWriter();
@@ -285,6 +318,9 @@ namespace BasisNetworkServer.Security
             NetworkServer.TrySend(peer, writer, BasisNetworkCommons.AdminChannel, DeliveryMethod.ReliableOrdered);
         }
 
+        /// <summary>
+        /// SanitizeNameを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string SanitizeName(string value)
         {
             if (string.IsNullOrWhiteSpace(value)) return "server";

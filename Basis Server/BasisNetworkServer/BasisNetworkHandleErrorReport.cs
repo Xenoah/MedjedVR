@@ -30,17 +30,26 @@ namespace BasisNetworkServer
             new ConcurrentDictionary<string, HashSet<string>>();
         private static readonly object FileLock = new object();
 
+        /// <summary>
+        /// RemoveUserを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RemoveUser(string uuid)
         {
             if (string.IsNullOrEmpty(uuid)) return;
             SeenPerUser.TryRemove(uuid, out _);
         }
 
+        /// <summary>
+        /// ClearAllSeenを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void ClearAllSeen()
         {
             SeenPerUser.Clear();
         }
 
+        /// <summary>
+        /// 処理イベントを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleEvent(NetPacketReader reader, NetPeer peer, byte eventType)
         {
             try
@@ -85,6 +94,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// ComputeHashを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ComputeHash(byte severity, string system, string message, string stack)
         {
             string firstStackLine = stack ?? string.Empty;
@@ -93,6 +105,9 @@ namespace BasisNetworkServer
             return severity + "|" + system + "|" + message + "|" + firstStackLine;
         }
 
+        /// <summary>
+        /// WriteReportを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WriteReport(string uuid, string displayName, string platform, byte severity, string system, string message, string stack)
         {
             if (message != null && message.Length > MaxMessageChars) message = message.Substring(0, MaxMessageChars);
@@ -119,6 +134,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// SanitizeFileNameを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string SanitizeFileName(string value)
         {
             if (string.IsNullOrEmpty(value)) return "unknown";
@@ -127,6 +145,9 @@ namespace BasisNetworkServer
             return value;
         }
 
+        /// <summary>
+        /// JsonEscapeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string JsonEscape(string value)
         {
             if (string.IsNullOrEmpty(value)) return string.Empty;

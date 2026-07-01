@@ -4,10 +4,20 @@ using System.Net.Sockets;
 
 namespace Basis.Network.Core
 {
+    /// <summary>
+    /// LNL接続TargetParserの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class LNLConnectionTargetParser : IConnectionTargetParser
     {
+        /// <summary>
+        /// DefaultPortを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public const ushort DefaultPort = 4296;
 
+        /// <summary>
+        /// Parseを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Parse(ConnectionTarget target)
         {
             if (target == null) return;
@@ -19,6 +29,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// Formatを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public string Format(ConnectionTarget target)
         {
             if (target == null) return string.Empty;

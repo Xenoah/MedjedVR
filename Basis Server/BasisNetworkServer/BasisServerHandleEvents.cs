@@ -21,11 +21,18 @@ using static SerializableBasis;
 
 namespace BasisServerHandle
 {
+    /// <summary>
+    /// Basisサーバー処理イベントの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisServerHandleEvents
     {
         [ThreadStatic] private static HashSet<int> _excludedSet;
 
         #region Server Events Setup
+        /// <summary>
+        /// Subscribeサーバーイベントを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void SubscribeServerEvents()
         {
             NetworkServer.Listener.ConnectionRequestEvent += HandleConnectionRequest;
@@ -35,6 +42,9 @@ namespace BasisServerHandle
             BasisServerInfoQuery.Subscribe();
         }
 
+        /// <summary>
+        /// Unsubscribeサーバーイベントを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void UnsubscribeServerEvents()
         {
             NetworkServer.Listener.ConnectionRequestEvent -= HandleConnectionRequest;
@@ -44,6 +54,9 @@ namespace BasisServerHandle
             BasisServerInfoQuery.Unsubscribe();
         }
 
+        /// <summary>
+        /// StopWorkerを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public static void StopWorker()
         {
             NetworkServer.Server?.Stop();
@@ -53,6 +66,9 @@ namespace BasisServerHandle
 
         #region Network Event Handlers
 
+        /// <summary>
+        /// Onネットワークエラーイベントを受け取り、関連するサーバー状態や送信処理へ反映します。
+        /// </summary>
         public static void OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
             BNL.LogError($"Endpoint {endPoint.ToString()} was reported with error {socketError}");
@@ -92,6 +108,9 @@ namespace BasisServerHandle
             return NetworkServer.AuthenticatedPeers.TryRemove(id, out _);
         }
 
+        /// <summary>
+        /// 処理ピアDisconnectedを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandlePeerDisconnected(NetPeer peer, DisconnectInfo info)
         {
             try
@@ -144,6 +163,9 @@ namespace BasisServerHandle
         #endregion
 
         #region Utility Methods
+        /// <summary>
+        /// RejectWithReasonを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RejectWithReason(ConnectionRequest request, string reason)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -152,6 +174,9 @@ namespace BasisServerHandle
             NetworkServer.ReturnWriter(writer);
             BNL.LogError($"Rejected for reason: {reason}");
         }
+        /// <summary>
+        /// RejectWithReasonを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RejectWithReason(NetPeer request, string reason)
         {
             int id = request.Id;
@@ -171,6 +196,9 @@ namespace BasisServerHandle
             BNL.LogError($"Rejected after accept with reason: {reason}");
         }
 
+        /// <summary>
+        /// IsHeadlessDisallowedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsHeadlessDisallowed(ClientMetaDataMessage metaData, out string reason)
         {
             if (!BasisHeadlessConnectionPolicyManager.HeadlessDisallowed ||
@@ -186,6 +214,9 @@ namespace BasisServerHandle
         #endregion
 
         #region Connection Handling
+        /// <summary>
+        /// 処理接続Requestを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleConnectionRequest(ConnectionRequest ConReq)
         {
             try
@@ -268,6 +299,9 @@ namespace BasisServerHandle
                 BNL.LogError(e.StackTrace);
             }
         }
+        /// <summary>
+        /// OnネットワークAcceptedイベントを受け取り、関連するサーバー状態や送信処理へ反映します。
+        /// </summary>
         public static void OnNetworkAccepted(NetPeer newPeer, ReadyMessage ReadyMessage, string UUID)
         {
             ushort PeerId = (ushort)newPeer.Id;
@@ -407,14 +441,23 @@ namespace BasisServerHandle
 
         // delegate type の event を宣言する。
         public static event AuthEventHandler OnAuthReceived;
+        /// <summary>
+        /// 処理認証を処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleAuth(NetPacketReader Reader, NetPeer Peer)
         {
             OnAuthReceived?.Invoke(Reader, Peer);
             Reader.Recycle();
         }
+        /// <summary>
+        /// OnサーバーReceivedを保持します。型は ServerEventHandler で、関連処理から共有される値です。
+        /// </summary>
         public static ServerEventHandler OnServerReceived;
         public delegate void ServerEventHandler(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod);
         #region Avatar and Voice Handling
+        /// <summary>
+        /// SendアバターメッセージToClientsを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendAvatarMessageToClients(NetPacketReader Reader, NetPeer Peer)
         {
             ClientAvatarChangeMessage ClientAvatarChangeMessage = new ClientAvatarChangeMessage();
@@ -454,6 +497,9 @@ namespace BasisServerHandle
             NetworkServer.ReturnWriter(Writer);
         }
 
+        /// <summary>
+        /// 処理音声メッセージを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleVoiceMessage(NetPacketReader reader, NetPeer peer)
         {
             AudioSegmentDataMessage audioSegment = ThreadSafeMessagePool<AudioSegmentDataMessage>.Rent();
@@ -562,6 +608,9 @@ namespace BasisServerHandle
             NetworkServer.ReturnWriter(writer);
         }
 
+        /// <summary>
+        /// Send音声メッセージToClientsを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendVoiceMessageToClients(ServerAudioSegmentMessage audioSegment, NetPeer sender, DeliveryMethod method)
         {
             if (!BasisSavedState.GetResolvedVoicePeers(sender, out List<NetPeer> targetPeers) || targetPeers == null)
@@ -610,6 +659,9 @@ namespace BasisServerHandle
             NetworkServer.ReturnWriter(writer);
             ArrayPool<NetPeer>.Shared.Return(snapshot, clearArray: true);
         }
+        /// <summary>
+        /// Update音声Receiversを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void UpdateVoiceReceivers(NetPacketReader Reader, NetPeer Peer, bool largeCount)
         {
             VoiceReceiversMessage VoiceReceiversMessage = new VoiceReceiversMessage();
@@ -717,6 +769,9 @@ namespace BasisServerHandle
         #endregion
 
         #region Spawn and Client List Handling
+        /// <summary>
+        /// SendRemoteSpawnメッセージを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendRemoteSpawnMessage(NetPeer authClient, ReadyMessage readyMessage)
         {
             ServerReadyMessage serverReadyMessage = LoadInitialState(authClient, readyMessage);
@@ -724,6 +779,9 @@ namespace BasisServerHandle
             SendClientListToNewClient(authClient);
         }
 
+        /// <summary>
+        /// 読み込みInitial状態を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static ServerReadyMessage LoadInitialState(NetPeer authClient, ReadyMessage readyMessage)
         {
             ServerReadyMessage serverReadyMessage = new ServerReadyMessage
@@ -807,6 +865,9 @@ namespace BasisServerHandle
                 BNL.LogError($"Failed to send client list: {ex.Message}\n{ex.StackTrace}");
             }
         }
+        /// <summary>
+        /// Createサーバー準備完了メッセージForピアを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool CreateServerReadyMessageForPeer(NetPeer peer, out ServerReadyMessage ServerReadyMessage)
         {
             try
@@ -881,6 +942,9 @@ namespace BasisServerHandle
         }
         #endregion
         #region Network ID Generation
+        /// <summary>
+        /// NetIDAssignを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void NetIDAssign(NetPacketReader Reader, NetPeer Peer)
         {
             NetIDMessage ServerUniqueIDMessage = new NetIDMessage();
@@ -890,6 +954,9 @@ namespace BasisServerHandle
             BasisNetworkIDDatabase.AddOrFindNetworkID(Peer, ServerUniqueIDMessage.playerID);
             // string を ushort に変換する必要がある。
         }
+        /// <summary>
+        /// 読み込みリソースを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void LoadResource(NetPacketReader Reader, NetPeer Peer,string UUID)
         {
             LocalLoadResource LocalLoadResource = new LocalLoadResource();
@@ -963,6 +1030,9 @@ namespace BasisServerHandle
                     break;
             }
         }
+        /// <summary>
+        /// 処理事前読み込み準備完了を処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandlePreloadReady(NetPacketReader Reader, NetPeer Peer)
         {
             PreloadReadyMessage readyMsg = new PreloadReadyMessage();
@@ -970,6 +1040,9 @@ namespace BasisServerHandle
             Reader.Recycle();
             BasisNetworkPreloadResourceManagement.HandleClientReady(readyMsg.LoadedNetID, Peer.Id, readyMsg.IsReady);
         }
+        /// <summary>
+        /// Unloadリソースを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void UnloadResource(NetPacketReader Reader, NetPeer Peer)
         {
             UnLoadResource UnLoadResource = new UnLoadResource();
@@ -999,6 +1072,9 @@ namespace BasisServerHandle
             BasisNetworkResourceManagement.UnloadResource(UnLoadResource, Peer);
             // string を ushort に変換する必要がある。
         }
+        /// <summary>
+        /// 処理Modifyリソースを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleModifyResource(NetPacketReader Reader, NetPeer Peer)
         {
             ModifyResource modifyResource = new ModifyResource();
@@ -1008,6 +1084,9 @@ namespace BasisServerHandle
             BasisNetworkResourceManagement.SetStatic(modifyResource, Peer);
         }
         #endregion
+        /// <summary>
+        /// 処理Storeデータベースを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleStoreDatabase(NetPacketReader reader, NetPeer peer)
         {
             if (NetworkServer.Configuration.DisableWriteUnlessAdminPersistentFlag)
@@ -1025,6 +1104,9 @@ namespace BasisServerHandle
             BasisPersistentDatabase.AddOrUpdate(basisData);
         }
 
+        /// <summary>
+        /// 処理RequestStoreデータベースを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleRequestStoreDatabase(NetPacketReader reader, NetPeer peer)
         {
             if(NetworkServer.Configuration.DisableReadUnlessAdminPersistentFlag)

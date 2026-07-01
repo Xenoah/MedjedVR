@@ -12,9 +12,19 @@ namespace BasisNetworkServer.BasisNetworking
     /// </summary>
     public static class BasisWordFilter
     {
+        /// <summary>
+        /// TextElementInfoの責務をまとめる構造体です。
+        /// ing領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private struct TextElementInfo
         {
+            /// <summary>
+            /// Valueを保持します。型は string で、関連処理から共有される値です。
+            /// </summary>
             public string Value;
+            /// <summary>
+            /// CharIndexを保持します。型は int で、関連処理から共有される値です。
+            /// </summary>
             public int CharIndex;
         }
 
@@ -298,6 +308,9 @@ namespace BasisNetworkServer.BasisNetworking
     { 'z', "ZΖzⱫ乙ᴢꮓｚ𑣄𝐳𝑧𝒛𝓏𝔃𝔷𝕫𝖟𝗓𝘇𝘻𝙯𝚣ᏃℤℨꓜＺ𐋵𑢩𑣥𝐙𝑍𝒁𝒵𝓩𝖅𝖹𝗭𝘡𝙕𝚉𝚭𝛧𝜡𝝛𝞕" },
         };
 
+        /// <summary>
+        /// BuildTextElementsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static List<TextElementInfo> BuildTextElements(string text)
         {
             var elements = new List<TextElementInfo>();
@@ -313,6 +326,9 @@ namespace BasisNetworkServer.BasisNetworking
             return elements;
         }
 
+        /// <summary>
+        /// CheckHomoglyphを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool CheckHomoglyph(char expected, string textElement)
         {
             if (textElement.Length == 1 && char.ToLowerInvariant(expected) == char.ToLowerInvariant(textElement[0]))
@@ -326,6 +342,9 @@ namespace BasisNetworkServer.BasisNetworking
             return false;
         }
 
+        /// <summary>
+        /// IsValidTrigramを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool IsValidTrigram(string trigram, string bannedWord)
         {
             if (trigram.Length != 3) return false;
@@ -346,6 +365,9 @@ namespace BasisNetworkServer.BasisNetworking
             return Trigrams.Contains(trigram);
         }
 
+        /// <summary>
+        /// CheckTrigramを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool CheckTrigram(List<TextElementInfo> elements, int index, string bannedWord)
         {
             string current = elements[index].Value.ToLowerInvariant();

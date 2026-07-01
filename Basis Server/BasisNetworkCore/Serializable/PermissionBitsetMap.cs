@@ -44,6 +44,9 @@ namespace Basis.Network.Core
 
         private static readonly Dictionary<string, int> NodeToIndex;
 
+        /// <summary>
+        /// 権限BitsetMapを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static PermissionBitsetMap()
         {
             NodeToIndex = new Dictionary<string, int>(IndexToNode.Length, StringComparer.OrdinalIgnoreCase);
@@ -53,6 +56,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// KnownCountを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int KnownCount => IndexToNode.Length;
 
         /// <summary>すべての known node を bit として表現するために必要な最小 byte 数。</summary>

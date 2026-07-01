@@ -13,6 +13,10 @@ using CryptoRng = System.Security.Cryptography.RandomNumberGenerator;
 
 namespace BasisNetworkClient
 {
+    /// <summary>
+    /// BasisDID認証識別情報クライアントの責務をまとめるクラスです。
+    /// Client領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisDIDAuthIdentityClient
     {
         private static (PubKey, PrivKey) Key;
@@ -21,6 +25,9 @@ namespace BasisNetworkClient
         private const string PrivateKeyDID = "PrivateKeyDID";
         private const string PublicKeyDID = "PublicKeyDID";
         private const string DIDID = "DIDID";
+        /// <summary>
+        /// GetOrSaveDIDを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static string GetOrSaveDID()
         {
 #if UNITY_2017_1_OR_NEWER
@@ -55,6 +62,9 @@ namespace BasisNetworkClient
 #endif
         }
 
+        /// <summary>
+        /// 識別情報メッセージを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IdentityMessage(NetPeer peer, NetPacketReader Reader, out NetDataWriter Writer)
         {
             Writer = new NetDataWriter();
@@ -94,6 +104,9 @@ namespace BasisNetworkClient
             var pubKey = Ed25519.ConvertPrivkeyToPubkey(privKey) ?? throw new Exception("privkey was invalid");
             return (pubKey, privKey);
         }
+        /// <summary>
+        /// クライアントKeyCreationを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void ClientKeyCreation(out (PubKey, PrivKey) Keys, out Did Did)
         {
             // client 用 key pair と DID を生成する。

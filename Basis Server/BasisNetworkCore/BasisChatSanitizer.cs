@@ -7,9 +7,18 @@ namespace Basis.Network.Core
     /// </summary>
     public static class BasisChatSanitizer
     {
+        /// <summary>
+        /// MaxメッセージCharactersを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int MaxMessageCharacters = 256;
+        /// <summary>
+        /// MaxメッセージBytesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int MaxMessageBytes = SerializableBasis.ChatMessage.MaxPayloadBytes;
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string Sanitize(string message)
         {
             if (string.IsNullOrEmpty(message))
@@ -26,6 +35,9 @@ namespace Basis.Network.Core
             return sanitized;
         }
 
+        /// <summary>
+        /// ClampUtf16Lengthを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string ClampUtf16Length(string text, int maxLength)
         {
             if (text.Length <= maxLength)
@@ -42,6 +54,9 @@ namespace Basis.Network.Core
             return text.Substring(0, length);
         }
 
+        /// <summary>
+        /// TrimLastScalarを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string TrimLastScalar(string text)
         {
             int length = text.Length;

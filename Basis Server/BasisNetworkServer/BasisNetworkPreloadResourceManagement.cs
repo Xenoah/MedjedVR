@@ -25,18 +25,40 @@ public static class BasisNetworkPreloadResourceManagement
     /// </summary>
     public static readonly ConcurrentDictionary<string, SyncLoadSession> ActiveSessions = new();
 
+    /// <summary>
+    /// 同期読み込みSessionの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class SyncLoadSession
     {
+        /// <summary>
+        /// リソースを保持します。型は LocalLoadResource で、関連処理から共有される値です。
+        /// </summary>
         public LocalLoadResource Resource;
+        /// <summary>
+        /// 準備完了Peersを保持します。型は HashSet<int> で、関連処理から共有される値です。
+        /// </summary>
         public HashSet<int> ReadyPeers = new();
+        /// <summary>
+        /// FailedPeersを保持します。型は HashSet<int> で、関連処理から共有される値です。
+        /// </summary>
         public HashSet<int> FailedPeers = new();
+        /// <summary>
+        /// StartTimeUtcを保持します。型は DateTime で、関連処理から共有される値です。
+        /// </summary>
         public DateTime StartTimeUtc;
+        /// <summary>
+        /// TimeoutCtsを保持します。型は CancellationTokenSource で、関連処理から共有される値です。
+        /// </summary>
         public CancellationTokenSource TimeoutCts;
 
         /// <summary>
         /// この session 開始時点の connected peer 総数。
         /// </summary>
         public int TotalPeerCount;
+        /// <summary>
+        /// IsCompleteを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool IsComplete => ReadyPeers.Count + FailedPeers.Count >= TotalPeerCount;
     }
 

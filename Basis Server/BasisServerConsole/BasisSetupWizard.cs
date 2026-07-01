@@ -23,6 +23,9 @@ namespace BasisNetworkConsole
         private const string AdminGroup = "admin";
         private const string DefaultPassword = "default_password";
 
+        /// <summary>
+        /// Runを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Run(Configuration config, string configFilePath)
         {
             string configDir = Path.GetDirectoryName(configFilePath) ?? string.Empty;
@@ -61,6 +64,9 @@ namespace BasisNetworkConsole
             RunInteractive(pm, config, configFilePath);
         }
 
+        /// <summary>
+        /// RunInteractiveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void RunInteractive(PermissionManager pm, Configuration config, string configFilePath)
         {
             PrintIntro();
@@ -185,6 +191,9 @@ namespace BasisNetworkConsole
             return input.Length == 0 ? current : input;
         }
 
+        /// <summary>
+        /// PromptUShortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static ushort PromptUShort(string label, ushort current)
         {
             while (true)
@@ -197,6 +206,9 @@ namespace BasisNetworkConsole
             }
         }
 
+        /// <summary>
+        /// PromptIntを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static int PromptInt(string label, int current, int min)
         {
             while (true)
@@ -209,6 +221,9 @@ namespace BasisNetworkConsole
             }
         }
 
+        /// <summary>
+        /// PromptPasswordを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string PromptPassword(string current)
         {
             Console.Write("Server password [keep current]: ");
@@ -230,6 +245,9 @@ namespace BasisNetworkConsole
             BNL.Log("you designate at least one admin before the server starts.");
         }
 
+        /// <summary>
+        /// PrintAdminHelpを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void PrintAdminHelp()
         {
             BNL.Log("An admin is identified by their Basis player UUID (a DID), which");
@@ -245,6 +263,9 @@ namespace BasisNetworkConsole
             BNL.Log("");
         }
 
+        /// <summary>
+        /// WarnNoAdminを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WarnNoAdmin()
         {
             BNL.LogWarning("============================================================");
@@ -260,6 +281,9 @@ namespace BasisNetworkConsole
             BNL.LogWarning("============================================================");
         }
 
+        /// <summary>
+        /// LooksLikeDidを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool LooksLikeDid(string value)
         {
             return value.StartsWith("did:", StringComparison.OrdinalIgnoreCase)

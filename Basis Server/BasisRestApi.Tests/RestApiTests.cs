@@ -9,6 +9,10 @@ using static SerializableBasis;
 namespace BasisRestApi.Tests
 {
     [Collection("RestApi")]
+    /// <summary>
+    /// RestApiTestsの責務をまとめるクラスです。
+    /// RestApi.Tests領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class RestApiTests : IDisposable
     {
         private const string ApiKey = "test-secret-key";
@@ -17,6 +21,9 @@ namespace BasisRestApi.Tests
         private readonly HttpClient _anon;
         private readonly string _base;
 
+        /// <summary>
+        /// RestApiTestsを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public RestApiTests()
         {
             BasisNetworkResourceManagement.UshortNetworkDatabase.Clear();
@@ -39,6 +46,9 @@ namespace BasisRestApi.Tests
             _anon = new HttpClient { BaseAddress = new Uri(_base) };
         }
 
+        /// <summary>
+        /// Disposeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Dispose()
         {
             _handler.Dispose();
@@ -51,6 +61,9 @@ namespace BasisRestApi.Tests
         // ── 認証 ──────────────────────────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// No認証HeaderReturns401を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task NoAuthHeader_Returns401()
         {
             var res = await _anon.GetAsync("/api/worlds");
@@ -58,6 +71,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// WrongTokenReturns401を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task WrongToken_Returns401()
         {
             using var client = new HttpClient { BaseAddress = new Uri(_base) };
@@ -67,6 +83,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// ValidTokenDoesNotReturn401を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task ValidToken_DoesNotReturn401()
         {
             var res = await _authed.GetAsync("/api/worlds");
@@ -76,6 +95,9 @@ namespace BasisRestApi.Tests
         // ── routing ───────────────────────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// UnknownPathReturns404を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task UnknownPath_Returns404()
         {
             var res = await _authed.GetAsync("/api/doesnotexist");
@@ -83,6 +105,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// WrongMethodReturns405を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task WrongMethod_Returns405()
         {
             var res = await _authed.DeleteAsync("/api/announce");
@@ -92,6 +117,9 @@ namespace BasisRestApi.Tests
         // ── GET /api/worlds ───────────────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// GetWorldsEmptyReturnsEmptyListを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public async Task GetWorlds_Empty_ReturnsEmptyList()
         {
             var res = await _authed.GetAsync("/api/worlds");
@@ -101,6 +129,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// GetWorldsReturnsOnlyScenesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public async Task GetWorlds_ReturnsOnlyScenes()
         {
             BasisNetworkResourceManagement.UshortNetworkDatabase.TryAdd("scene1", new LocalLoadResource
@@ -117,6 +148,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// GetWorldsFieldsAreMappedCorrectlyを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public async Task GetWorlds_FieldsAreMappedCorrectly()
         {
             BasisNetworkResourceManagement.UshortNetworkDatabase.TryAdd("w1", new LocalLoadResource
@@ -140,6 +174,9 @@ namespace BasisRestApi.Tests
         // ── POST /api/worlds ──────────────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldMissingUrlReturns400を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_MissingUrl_Returns400()
         {
             var res = await PostJson("/api/worlds", """{"password":"pass"}""");
@@ -147,6 +184,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldMissingPasswordReturns400を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_MissingPassword_Returns400()
         {
             var res = await PostJson("/api/worlds", """{"url":"https://example.com/w.bee"}""");
@@ -154,6 +194,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldImmediateReturns200AndAddsToデータベースを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_Immediate_Returns200AndAddsToDatabase()
         {
             var res = await PostJson("/api/worlds",
@@ -168,6 +211,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldSynchronizedReturns200AndAddsToデータベースを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_Synchronized_Returns200AndAddsToDatabase()
         {
             var res = await PostJson("/api/worlds",
@@ -182,6 +228,9 @@ namespace BasisRestApi.Tests
         // ── DELETE /api/worlds/{netId} ────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// UnloadWorldNotFoundReturns404を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task UnloadWorld_NotFound_Returns404()
         {
             var res = await _authed.DeleteAsync("/api/worlds/nonexistent-id");
@@ -189,6 +238,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// UnloadWorldFoundReturns200AndRemovesFromデータベースを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task UnloadWorld_Found_Returns200AndRemovesFromDatabase()
         {
             BasisNetworkResourceManagement.UshortNetworkDatabase.TryAdd("to-delete", new LocalLoadResource
@@ -203,6 +255,9 @@ namespace BasisRestApi.Tests
         // ── POST /api/announce ────────────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// AnnounceAllMissingメッセージReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnounceAll_MissingMessage_Returns400()
         {
             var res = await PostJson("/api/announce", """{}""");
@@ -210,6 +265,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// AnnounceAllEmptyメッセージReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnounceAll_EmptyMessage_Returns400()
         {
             var res = await PostJson("/api/announce", """{"message":""}""");
@@ -217,6 +275,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// AnnounceAllメッセージTooLongReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnounceAll_MessageTooLong_Returns400()
         {
             var body = JsonSerializer.Serialize(new { message = new string('a', 513) });
@@ -225,6 +286,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// AnnounceAllNonStringメッセージReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnounceAll_NonStringMessage_Returns400()
         {
             var res = await PostJson("/api/announce", """{"message":42}""");
@@ -232,6 +296,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// AnnounceAllValidメッセージReturns200を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnounceAll_ValidMessage_Returns200()
         {
             var res = await PostJson("/api/announce", """{"message":"hello world"}""");
@@ -241,6 +308,9 @@ namespace BasisRestApi.Tests
         // ── POST /api/announce/{uuid} ─────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// AnnounceプレイヤーUnknownUuidReturns404を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task AnnouncePlayer_UnknownUuid_Returns404()
         {
             var res = await PostJson("/api/announce/unknown-uuid-123", """{"message":"hi"}""");
@@ -248,6 +318,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldPasswordEmbeddedInUrlReturns200AndStoresCleanUrlを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_PasswordEmbeddedInUrl_Returns200AndStoresCleanUrl()
         {
             const string cleanUrl = "https://example.com/world.bee";
@@ -263,6 +336,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// 読み込みWorldExplicitPasswordOverridesEmbeddedを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public async Task LoadWorld_ExplicitPasswordOverridesEmbedded()
         {
             var res = await PostJson("/api/worlds",
@@ -279,6 +355,9 @@ namespace BasisRestApi.Tests
         // ── POST /api/worlds/switch ───────────────────────────────────────────
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldMissingUrlReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_MissingUrl_Returns400()
         {
             var res = await PostJson("/api/worlds/switch", """{"password":"pass"}""");
@@ -286,6 +365,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldMissingPasswordNoFragmentReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_MissingPasswordNoFragment_Returns400()
         {
             var res = await PostJson("/api/worlds/switch", """{"url":"https://example.com/next.bee"}""");
@@ -293,6 +375,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldValidReturns200AndAddsToデータベースを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_Valid_Returns200AndAddsToDatabase()
         {
             var res = await PostJson("/api/worlds/switch",
@@ -307,6 +392,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldPasswordEmbeddedInUrlReturns200AndStoresCleanUrlを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_PasswordEmbeddedInUrl_Returns200AndStoresCleanUrl()
         {
             const string cleanUrl = "https://beefile.io/7ec036b1a8fdd4e7f439339be9cbf54d";
@@ -326,6 +414,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldInvalidDelayReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_InvalidDelay_Returns400()
         {
             var res = await PostJson("/api/worlds/switch",
@@ -334,6 +425,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldDelayTooLargeReturns400を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_DelayTooLarge_Returns400()
         {
             var res = await PostJson("/api/worlds/switch",
@@ -342,6 +436,9 @@ namespace BasisRestApi.Tests
         }
 
         [Fact]
+        /// <summary>
+        /// SwitchWorldWithDelayNetIdReturnedImmediately読み込みDeferredを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task SwitchWorld_WithDelay_NetIdReturnedImmediatelyLoadDeferred()
         {
             // delay > 0: announce を先に送信し、cross-channel ordering を保ってから delay 後に load を開始する。
@@ -365,6 +462,9 @@ namespace BasisRestApi.Tests
         private Task<HttpResponseMessage> PostJson(string path, string json) =>
             _authed.PostAsync(path, new StringContent(json, Encoding.UTF8, "application/json"));
 
+        /// <summary>
+        /// FreePortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static ushort FreePort()
         {
             using var tmp = new TcpListener(IPAddress.Loopback, 0);
@@ -376,5 +476,9 @@ namespace BasisRestApi.Tests
     }
 
     [CollectionDefinition("RestApi", DisableParallelization = true)]
+    /// <summary>
+    /// RestApiCollectionの責務をまとめるクラスです。
+    /// RestApi.Tests領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class RestApiCollection { }
 }

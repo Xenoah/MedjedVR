@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 namespace BasisNetworkServer.BasisNetworking
 {
     [DataContract]
+    /// <summary>
+    /// BasisDataの責務をまとめるクラスです。
+    /// ing領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class BasisData
     {
         [DataMember]
@@ -19,6 +23,9 @@ namespace BasisNetworkServer.BasisNetworking
         [DataMember]
         public ConcurrentDictionary<string, object> JsonPayload { get; set; } = new();
 
+        /// <summary>
+        /// BasisDataを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public BasisData(string name, ConcurrentDictionary<string, object> jsonPayload)
         {
             Name = name;
@@ -26,6 +33,10 @@ namespace BasisNetworkServer.BasisNetworking
         }
     }
 
+    /// <summary>
+    /// BasisPersistentデータベースの責務をまとめるクラスです。
+    /// ing領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisPersistentDatabase
     {
         private static readonly ConcurrentDictionary<string, BasisData> _dataByName = new();
@@ -37,12 +48,18 @@ namespace BasisNetworkServer.BasisNetworking
         private static readonly TimeSpan _saveInterval = TimeSpan.FromSeconds(5);
         private static readonly AutoResetEvent _saveTrigger = new(false);
 
+        /// <summary>
+        /// BasisPersistentデータベースを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisPersistentDatabase()
         {
             Load();
             StartAutoSaveLoop();
         }
 
+        /// <summary>
+        /// SetFilePathを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         public static void SetFilePath(string path)
         {
             if (string.IsNullOrWhiteSpace(path)) throw new ArgumentNullException(nameof(path));
@@ -54,6 +71,9 @@ namespace BasisNetworkServer.BasisNetworking
             }
         }
 
+        /// <summary>
+        /// AddOrUpdateを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool AddOrUpdate(BasisData item)
         {
             if (item == null) throw new ArgumentNullException(nameof(item));
@@ -91,6 +111,9 @@ namespace BasisNetworkServer.BasisNetworking
 
         public static IEnumerable<BasisData> GetAll() => _dataByName.Values.ToArray();
 
+        /// <summary>
+        /// GetByNameを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static bool GetByName(string name, out BasisData BasisData)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -100,6 +123,9 @@ namespace BasisNetworkServer.BasisNetworking
             }
             return _dataByName.TryGetValue(name, out BasisData);
         }
+        /// <summary>
+        /// Removeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool Remove(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) return false;
@@ -108,12 +134,18 @@ namespace BasisNetworkServer.BasisNetworking
             return result;
         }
 
+        /// <summary>
+        /// MarkDirtyを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void MarkDirty()
         {
             _isDirty = true;
             _saveTrigger.Set();
         }
 
+        /// <summary>
+        /// Saveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Save()
         {
             lock (_fileLock)
@@ -138,6 +170,9 @@ namespace BasisNetworkServer.BasisNetworking
             }
         }
 
+        /// <summary>
+        /// 読み込みを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void Load()
         {
             lock (_fileLock)
@@ -174,6 +209,9 @@ namespace BasisNetworkServer.BasisNetworking
             }
         }
 
+        /// <summary>
+        /// StartAutoSaveLoopを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         private static void StartAutoSaveLoop()
         {
             Task.Run(async () =>
@@ -190,6 +228,9 @@ namespace BasisNetworkServer.BasisNetworking
             }, _cts.Token);
         }
 
+        /// <summary>
+        /// Shutdownを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Shutdown()
         {
             _cts.Cancel();

@@ -37,8 +37,17 @@ public static class BasisServerMessageRegistry
     // per-connect SendSupplyTo が allocation-free になるよう、atomically-swapped snapshot として cache する。
     private sealed class SupplySnapshot
     {
+        /// <summary>
+        /// Versionを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public readonly int Version;
+        /// <summary>
+        /// Descriptorsを保持します。型は SerializableBasis.BasisMessageDescriptor[] で、関連処理から共有される値です。
+        /// </summary>
         public readonly SerializableBasis.BasisMessageDescriptor[] Descriptors;
+        /// <summary>
+        /// SupplySnapshotを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public SupplySnapshot(int version, SerializableBasis.BasisMessageDescriptor[] descriptors)
         {
             Version = version;
@@ -48,6 +57,9 @@ public static class BasisServerMessageRegistry
     private static volatile SupplySnapshot _supplySnapshot;
     private static int _supplyVersion;
 
+    /// <summary>
+    /// BasisサーバーメッセージRegistryを生成し、利用に必要な初期状態を設定します。
+    /// </summary>
     static BasisServerMessageRegistry()
     {
         RegisterCoreHandlers();
@@ -216,6 +228,9 @@ public static class BasisServerMessageRegistry
         return false;
     }
 
+    /// <summary>
+    /// RegisterCoreHandlersを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void RegisterCoreHandlers()
     {
         RegisterCore(BasisNetworkCommons.ShoutVoiceChannel, (peer, reader, channel, dm) =>
@@ -381,6 +396,9 @@ public static class BasisServerMessageRegistry
         });
     }
 
+    /// <summary>
+    /// TryWith権限を試行し、失敗時に呼び出し元が分岐できる結果を返します。
+    /// </summary>
     private static bool TryWithPermission(NetPeer peer, NetPacketReader reader, string permNode, out string uuid)
     {
         if (!NetworkServer.AuthIdentity.NetIDToUUID(peer, out uuid))
@@ -401,6 +419,9 @@ public static class BasisServerMessageRegistry
         return false;
     }
 
+    /// <summary>
+    /// 処理Permittedを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+    /// </summary>
     private static void HandlePermitted(NetPeer peer, NetPacketReader reader, string permNode, Action action)
     {
         if (TryWithPermission(peer, reader, permNode, out _))

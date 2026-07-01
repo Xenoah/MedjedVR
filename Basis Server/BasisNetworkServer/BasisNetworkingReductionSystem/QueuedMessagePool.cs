@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using static SerializableBasis;
 namespace BasisNetworkServer.BasisNetworkingReductionSystem
 {
+    /// <summary>
+    /// QueuedメッセージPoolの責務をまとめるクラスです。
+    /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class QueuedMessagePool
     {
         private const int ThreadLocalCapacity = 64;
@@ -10,6 +14,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         [ThreadStatic]
         private static List<QueuedMessage> t_pool;
 
+        /// <summary>
+        /// Rentを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static QueuedMessage Rent()
         {
             var local = t_pool;
@@ -23,6 +30,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             return new QueuedMessage();
         }
 
+        /// <summary>
+        /// Returnを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Return(QueuedMessage msg)
         {
             msg.FromPeer = null;

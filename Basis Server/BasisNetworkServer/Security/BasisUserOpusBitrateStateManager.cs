@@ -16,6 +16,9 @@ namespace BasisNetworkServer.Security
         // Opus は 500..512000 bps を受け付ける。voice 用に少し狭い conservative range へ clamp する。
         // 0 は "clear override" sentinel として予約する。
         public const int MinBitrate = 6000;
+        /// <summary>
+        /// MaxBitrateを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int MaxBitrate = 510000;
 
         private static readonly ConcurrentDictionary<int, int> _overrides = new();
@@ -43,12 +46,18 @@ namespace BasisNetworkServer.Security
 
         public static void ClearForPeer(int netId) => _overrides.TryRemove(netId, out _);
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             int bitrate = TryGetBitrate(peer.Id, out int v) ? v : 0;
             SendOverrideToPeer(peer, bitrate);
         }
 
+        /// <summary>
+        /// SendOverrideToピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendOverrideToPeer(NetPeer peer, int bitrate)
         {
             NetDataWriter writer = NetworkServer.RentWriter();

@@ -3,8 +3,16 @@ using Basis.Network.Core.Compression;
 using System;
 using static Basis.Network.Core.Compression.BasisAvatarBitPacking;
 
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
+    /// <summary>
+    /// Localアバター同期メッセージの責務をまとめる構造体です。
+    /// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public struct LocalAvatarSyncMessage
     {
         // on-wire contract:
@@ -17,17 +25,35 @@ public static partial class SerializableBasis
         // position (12) -> bone rotations (bitstream、quality により変化) -> Posit16 scale (2) -> rotation (7) -> hips tail
 
         public byte DataQualityLevel; // 0=Low, 1=Medium, 2=High
+        /// <summary>
+        /// arrayを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public byte[] array;          // payload bytes (length must match ConvertToSize(quality))
 
+        /// <summary>
+        /// AdditionalアバターDatasを保持します。型は AdditionalAvatarData[] で、関連処理から共有される値です。
+        /// </summary>
         public AdditionalAvatarData[] AdditionalAvatarDatas;
+        /// <summary>
+        /// AdditionalアバターDataSizeを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte AdditionalAvatarDataSize;
+        /// <summary>
+        /// LinkedアバターIndexを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public byte LinkedAvatarIndex;
 
+        /// <summary>
+        /// Localアバター同期メッセージを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public LocalAvatarSyncMessage(byte[] array) : this()
         {
             this.array = array;
         }
 
+        /// <summary>
+        /// TryGetExpectedPayloadLengthを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         private static bool TryGetExpectedPayloadLength(byte dataQualityLevel, out ushort expected)
         {
             expected = 0;
@@ -91,6 +117,9 @@ public static partial class SerializableBasis
             DeserializeAdditionalData(reader);
         }
 
+        /// <summary>
+        /// DeserializePayloadを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void DeserializePayload(NetDataReader reader)
         {
             if (!TryGetExpectedPayloadLength(DataQualityLevel, out ushort expected))
@@ -127,6 +156,9 @@ public static partial class SerializableBasis
             DeserializeAdditionalData(reader);
         }
 
+        /// <summary>
+        /// DeserializeAdditionalDataを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void DeserializeAdditionalData(NetDataReader reader)
         {
             if (!reader.TryGetByte(out AdditionalAvatarDataSize))

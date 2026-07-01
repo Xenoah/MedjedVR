@@ -7,6 +7,10 @@ using static SerializableBasis;
 
 namespace Basis.Network.Server.Generic
 {
+    /// <summary>
+    /// BasisSaved状態の責務をまとめるクラスです。
+    /// ing領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisSavedState
     {
         // data type ごとの thread-safe dictionary。

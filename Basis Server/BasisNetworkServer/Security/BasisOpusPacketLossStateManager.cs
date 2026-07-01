@@ -14,6 +14,9 @@ namespace BasisNetworkServer.Security
         // 0..100 に clamp する。client と admin handler が race する可能性があるため Interlocked を使う。
         private static int _packetLossPercent = 10;
 
+        /// <summary>
+        /// パケットLossPercentを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int PacketLossPercent => Interlocked.CompareExchange(ref _packetLossPercent, 0, 0);
 
         /// <summary>clamp して set し、値が実際に変わったかを返す。</summary>
@@ -25,6 +28,9 @@ namespace BasisNetworkServer.Security
             return previous != percent;
         }
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -40,6 +46,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Broadcast状態を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void BroadcastState()
         {
             NetDataWriter writer = NetworkServer.RentWriter();

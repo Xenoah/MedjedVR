@@ -20,9 +20,18 @@ namespace BasisNetworkServer.Security
         private static float _minMeters = DefaultMinMeters;
         private static float _maxMeters = DefaultMaxMeters;
 
+        /// <summary>
+        /// MinMetersを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float MinMeters => Interlocked.CompareExchange(ref _minMeters, 0f, 0f);
+        /// <summary>
+        /// MaxMetersを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float MaxMeters => Interlocked.CompareExchange(ref _maxMeters, 0f, 0f);
 
+        /// <summary>
+        /// InitializeFrom設定を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void InitializeFromConfig(Configuration config)
         {
             SetLimits(config.MinAvatarEyeHeightMeters, config.MaxAvatarEyeHeightMeters);
@@ -37,6 +46,9 @@ namespace BasisNetworkServer.Security
             return prevMin != minMeters || prevMax != maxMeters;
         }
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -53,6 +65,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Broadcast状態を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void BroadcastState()
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -73,6 +88,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Sanitize(ref float minMeters, ref float maxMeters)
         {
             if (float.IsNaN(minMeters) || float.IsInfinity(minMeters) || minMeters <= 0f) minMeters = DefaultMinMeters;

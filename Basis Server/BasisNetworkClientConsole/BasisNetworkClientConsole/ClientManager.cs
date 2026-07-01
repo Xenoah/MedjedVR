@@ -14,18 +14,37 @@ using static SerializableBasis;
 
 namespace Basis.Network
 {
+    /// <summary>
+    /// クライアント管理の責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class ClientManager
     {
+        /// <summary>
+        /// クライアントCountを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int ClientCount => ConfigManager.ClientCount;
         private readonly CancellationTokenSource cts = new();
+        /// <summary>
+        /// FinalPeersを保持します。型は NetPeer[] で、関連処理から共有される値です。
+        /// </summary>
         public NetPeer[] FinalPeers;
+        /// <summary>
+        /// FinalClientsを保持します。型は NetworkClient[] で、関連処理から共有される値です。
+        /// </summary>
         public NetworkClient[] FinalClients;
+        /// <summary>
+        /// Sizeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int Size;
 
         // runtime 中に config は変わらないため、一度だけ cache する。
         private byte[] _cachedPasswordBytes;
         private byte[] _cachedAvatarBytes;
 
+        /// <summary>
+        /// Prepareを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Prepare()
         {
             Size = BasisAvatarBitPacking.ConvertToSize(BitQuality.High);
@@ -43,6 +62,9 @@ namespace Basis.Network
             FinalClients = new NetworkClient[ClientCount];
         }
 
+        /// <summary>
+        /// StartClientsAsyncを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public async Task StartClientsAsync()
         {
             for (int Index = 0; Index < ClientCount; Index++)
@@ -92,6 +114,9 @@ namespace Basis.Network
                 await Task.Delay(1, cts.Token);
             }
         }
+        /// <summary>
+        /// ReconnectクライアントAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public async Task ReconnectClientAsync(int index)
         {
             if (index < 0 || index >= FinalClients.Length) return;
@@ -148,12 +173,18 @@ namespace Basis.Network
                 BNL.Log($"Reconnected: {name} ({identity.Did}) at index {index}");
             }
         }
+        /// <summary>
+        /// StopClientsAsyncを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public Task StopClientsAsync()
         {
             if (FinalClients != null)
                 foreach (var client in FinalClients) client?.Disconnect();
             return Task.CompletedTask;
         }
+        /// <summary>
+        /// Create設定を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public Configuration CreateConfig()
         {
             Configuration Configuration = new Configuration();
@@ -165,14 +196,24 @@ namespace Basis.Network
         }
     }
 
+    /// <summary>
+    /// Consoleクライアント識別情報の責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class ConsoleClientIdentity
     {
         private readonly PrivKey _privateKey;
 
+        /// <summary>
+        /// Authenticatedを保持します。型は volatile bool で、関連処理から共有される値です。
+        /// </summary>
         public volatile bool Authenticated;
 
         public string Did { get; }
 
+        /// <summary>
+        /// Consoleクライアント識別情報を生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public ConsoleClientIdentity()
         {
             BasisDIDAuthIdentityClient.ClientKeyCreation(out (PubKey, PrivKey) keys, out Did did);
@@ -180,6 +221,9 @@ namespace Basis.Network
             Did = did.V;
         }
 
+        /// <summary>
+        /// TryRespondToChallengeを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryRespondToChallenge(NetPacketReader reader, out NetDataWriter writer)
         {
             writer = new NetDataWriter();

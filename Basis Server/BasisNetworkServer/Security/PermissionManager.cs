@@ -13,32 +13,80 @@ namespace BasisPermissions
     // =========================
     public static class PermNodes
     {
+        /// <summary>
+        /// Allを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string All = "*";
+        /// <summary>
+        /// helpを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string help = "basis.command.help";
+        /// <summary>
+        /// サーバーStatsを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ServerStats = "basis.server.stats";
 
+        /// <summary>
+        /// リソース読み込みWorldを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceLoadWorld = "basis.resource.load.world";
+        /// <summary>
+        /// リソースUnloadWorldを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceUnloadWorld = "basis.resource.unload.world";
 
+        /// <summary>
+        /// リソース読み込みPropを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceLoadProp = "basis.resource.load.prop";
+        /// <summary>
+        /// リソースUnloadPropを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceUnloadProp = "basis.resource.unload.prop";
 
+        /// <summary>
+        /// リソース読み込みアバターを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceLoadAvatar = "basis.resource.load.avatar";
+        /// <summary>
+        /// リソースUnloadアバターを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceUnloadAvatar = "basis.resource.unload.avatar";
 
         // global lockout (BasisGlobalLockManager) を bypass する。
         // matching bypass node を持たない user は、lock 中に loading を block される。
         public const string ResourceLockBypassAvatar = "basis.resource.lockbypass.avatar";
+        /// <summary>
+        /// リソースLockBypassPropを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceLockBypassProp = "basis.resource.lockbypass.prop";
+        /// <summary>
+        /// リソースLockBypassWorldを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ResourceLockBypassWorld = "basis.resource.lockbypass.world";
         /// <summary>server share 開始時に <c>ServersLocked</c> を bypass する。</summary>
         public const string ResourceLockBypassServer = "basis.resource.lockbypass.server";
 
+        /// <summary>
+        /// OwnershipTransferを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string OwnershipTransfer = "basis.ownership.transfer";
+        /// <summary>
+        /// OwnershipRemoveを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string OwnershipRemove = "basis.ownership.remove";
+        /// <summary>
+        /// OwnershipGetを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string OwnershipGet = "basis.ownership.get";
 
+        /// <summary>
+        /// ContentShareDeleteを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ContentShareDelete = "basis.contentshare.delete";
+        /// <summary>
+        /// ContentShareCreateを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ContentShareCreate = "basis.contentshare.create";
 
         /// <summary>
@@ -46,27 +94,78 @@ namespace BasisPermissions
         /// </summary>
         public const string protection = "basis.protection";
 
+        /// <summary>
+        /// 設定Editorを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ConfigurationEditor = "basis.configuration";
 
+        /// <summary>
+        /// プレイヤーModerationを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string PlayerModeration = "basis.moderation";
 
+        /// <summary>
+        /// ModerationBanを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationBan = "basis.moderation.ban";
+        /// <summary>
+        /// ModerationKickを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationKick = "basis.moderation.kick";
+        /// <summary>
+        /// ModerationIpBanを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationIpBan = "basis.moderation.ipban";
+        /// <summary>
+        /// ModerationUnbanを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationUnban = "basis.moderation.unban";
+        /// <summary>
+        /// ModerationUnbanIpを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationUnbanIp = "basis.moderation.unbanip";
+        /// <summary>
+        /// Moderationメッセージを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationMessage = "basis.moderation.message";
+        /// <summary>
+        /// ModerationメッセージAllを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationMessageAll = "basis.moderation.messageall";
+        /// <summary>
+        /// ModerationTeleportを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationTeleport = "basis.moderation.teleport";
+        /// <summary>
+        /// ModerationShoutを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationShout = "basis.moderation.shout";
+        /// <summary>
+        /// ModerationGlobalLockを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationGlobalLock = "basis.moderation.globallock";
+        /// <summary>
+        /// ModerationHeadlessAudioを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationHeadlessAudio = "basis.moderation.headlessaudio";
+        /// <summary>
+        /// ModerationOpusBitrateを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string ModerationOpusBitrate = "basis.moderation.opusbitrate";
         /// <summary>server allow-list 上の UUID を add/remove する (ban management とは別)。</summary>
         public const string ModerationAllowlist = "basis.moderation.whitelist";
+        /// <summary>
+        /// AdminLogsを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string AdminLogs = "basis.admin.logs";
 
+        /// <summary>
+        /// PermissionsViewを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string PermissionsView = "basis.permissions.view";
+        /// <summary>
+        /// PermissionsEditを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string PermissionsEdit = "basis.permissions.edit";
     }
 
@@ -75,6 +174,9 @@ namespace BasisPermissions
     // =========================
     public sealed class PermissionUser
     {
+        /// <summary>
+        /// Uuidを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Uuid = "";
         // user に割り当てられた raw node ("-node" deny entry を含められる)。
         public HashSet<string> Nodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -82,8 +184,15 @@ namespace BasisPermissions
         public HashSet<string> Groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 権限Groupの責務をまとめるクラスです。
+    /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class PermissionGroup
     {
+        /// <summary>
+        /// Nameを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Name = "";
         // group に割り当てられた raw node ("-node" deny entry を含められる)。
         public HashSet<string> Nodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -91,17 +200,34 @@ namespace BasisPermissions
         public HashSet<string> Parents = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// 権限Storeの責務をまとめるクラスです。
+    /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class PermissionStore
     {
+        /// <summary>
+        /// Usersを保持します。型は Dictionary<string, PermissionUser> で、関連処理から共有される値です。
+        /// </summary>
         public Dictionary<string, PermissionUser> Users = new Dictionary<string, PermissionUser>(StringComparer.OrdinalIgnoreCase);
+        /// <summary>
+        /// Groupsを保持します。型は Dictionary<string, PermissionGroup> で、関連処理から共有される値です。
+        /// </summary>
         public Dictionary<string, PermissionGroup> Groups = new Dictionary<string, PermissionGroup>(StringComparer.OrdinalIgnoreCase);
     }
+    /// <summary>
+    /// EffectivePermissionsの責務をまとめるクラスです。
+    /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class EffectivePermissions
     {
         // 判定テーブル: node => allow(true) / deny(false)。
         // inheritance resolution 後の exact node と wildcard node ("a.*", "*") を含む。
         private readonly Dictionary<string, bool> _decisions;
 
+        /// <summary>
+        /// EffectivePermissionsを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal EffectivePermissions(Dictionary<string, bool> decisions)
         {
             _decisions = decisions;
@@ -158,6 +284,9 @@ namespace BasisPermissions
             return allowed;
         }
 
+        /// <summary>
+        /// GetAllDeniedRulesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public IReadOnlyCollection<string> GetAllDeniedRules()
         {
             List<string> denied = new List<string>(_decisions.Count);
@@ -216,6 +345,9 @@ namespace BasisPermissions
         }
 
         public string GetXmlPath() => _xmlPath;
+        /// <summary>
+        /// 読み込みFromXmlを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public void LoadFromXml(string? pathOverride = null)
         {
             string path = pathOverride ?? _xmlPath;
@@ -232,6 +364,9 @@ namespace BasisPermissions
             finally { _lock.ExitWriteLock(); }
         }
 
+        /// <summary>
+        /// SaveToXmlを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void SaveToXml(string? pathOverride = null)
         {
             string path = pathOverride ?? _xmlPath;
@@ -258,6 +393,9 @@ namespace BasisPermissions
             }
         }
 
+        /// <summary>
+        /// DebouncedSaveTickを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void DebouncedSaveTick()
         {
             try
@@ -271,21 +409,33 @@ namespace BasisPermissions
             }
         }
 
+        /// <summary>
+        /// Hasを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public bool Has(string uuid, string node)
         {
             return GetEffective(uuid).Has(node);
         }
 
+        /// <summary>
+        /// GetAllAllowedRulesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public IReadOnlyCollection<string> GetAllAllowedRules(string uuid)
         {
             return GetEffective(uuid).GetAllAllowedRules();
         }
 
+        /// <summary>
+        /// GetAllDeniedRulesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public IReadOnlyCollection<string> GetAllDeniedRules(string uuid)
         {
             return GetEffective(uuid).GetAllDeniedRules();
         }
 
+        /// <summary>
+        /// TryGetUserを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetUser(string uuid, out PermissionUser user)
         {
             _lock.EnterReadLock();
@@ -293,6 +443,9 @@ namespace BasisPermissions
             finally { _lock.ExitReadLock(); }
         }
 
+        /// <summary>
+        /// TryGetGroupを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetGroup(string name, out PermissionGroup group)
         {
             _lock.EnterReadLock();
@@ -380,6 +533,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(uuid);
         }
 
+        /// <summary>
+        /// RemoveUserNodeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void RemoveUserNode(string uuid, string node)
         {
             if (string.IsNullOrWhiteSpace(uuid) || string.IsNullOrWhiteSpace(node)) return;
@@ -400,6 +556,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(uuid);
         }
 
+        /// <summary>
+        /// AddUserToGroupを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void AddUserToGroup(string uuid, string group)
         {
             if (string.IsNullOrWhiteSpace(uuid) || string.IsNullOrWhiteSpace(group)) return;
@@ -421,6 +580,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(uuid);
         }
 
+        /// <summary>
+        /// RemoveUserFromGroupを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void RemoveUserFromGroup(string uuid, string group)
         {
             if (string.IsNullOrWhiteSpace(uuid) || string.IsNullOrWhiteSpace(group)) return;
@@ -441,6 +603,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(uuid);
         }
 
+        /// <summary>
+        /// AddGroupNodeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void AddGroupNode(string groupName, string node)
         {
             if (string.IsNullOrWhiteSpace(groupName) || string.IsNullOrWhiteSpace(node)) return;
@@ -462,6 +627,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(null);
         }
 
+        /// <summary>
+        /// RemoveGroupNodeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void RemoveGroupNode(string groupName, string node)
         {
             if (string.IsNullOrWhiteSpace(groupName) || string.IsNullOrWhiteSpace(node)) return;
@@ -482,6 +650,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(null);
         }
 
+        /// <summary>
+        /// AddGroupParentを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void AddGroupParent(string groupName, string parentName)
         {
             if (string.IsNullOrWhiteSpace(groupName) || string.IsNullOrWhiteSpace(parentName)) return;
@@ -503,6 +674,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(null);
         }
 
+        /// <summary>
+        /// RemoveGroupParentを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void RemoveGroupParent(string groupName, string parentName)
         {
             if (string.IsNullOrWhiteSpace(groupName) || string.IsNullOrWhiteSpace(parentName)) return;
@@ -523,6 +697,9 @@ namespace BasisPermissions
             if (changed) OnPermissionsChanged?.Invoke(null);
         }
 
+        /// <summary>
+        /// DeleteGroupを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public bool DeleteGroup(string groupName)
         {
             if (string.IsNullOrWhiteSpace(groupName)) return false;
@@ -582,12 +759,25 @@ namespace BasisPermissions
             }
             finally { _lock.ExitReadLock(); }
         }
+        /// <summary>
+        /// CacheEntryの責務をまとめる構造体です。
+        /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         private struct CacheEntry
         {
+            /// <summary>
+            /// Versionを保持します。型は int で、関連処理から共有される値です。
+            /// </summary>
             public int Version;
+            /// <summary>
+            /// Permsを保持します。型は EffectivePermissions で、関連処理から共有される値です。
+            /// </summary>
             public EffectivePermissions Perms;
         }
 
+        /// <summary>
+        /// TouchUserを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void TouchUser(string uuid)
         {
             _version++;
@@ -595,6 +785,9 @@ namespace BasisPermissions
             _dirty = true;
         }
 
+        /// <summary>
+        /// TouchAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void TouchAll()
         {
             _version++;
@@ -602,6 +795,9 @@ namespace BasisPermissions
             _dirty = true;
         }
 
+        /// <summary>
+        /// EvictUserCacheを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void EvictUserCache(string uuid)
         {
             if (string.IsNullOrEmpty(uuid)) return;
@@ -616,6 +812,9 @@ namespace BasisPermissions
             }
         }
 
+        /// <summary>
+        /// GetEffectiveを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         private EffectivePermissions GetEffective(string uuid)
         {
             _lock.EnterUpgradeableReadLock();
@@ -639,6 +838,9 @@ namespace BasisPermissions
             finally { _lock.ExitUpgradeableReadLock(); }
         }
 
+        /// <summary>
+        /// BuildEffectiveNoLockを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public EffectivePermissions BuildEffective_NoLock(string uuid)
         {
             // deny-wins decision table。
@@ -664,6 +866,9 @@ namespace BasisPermissions
             return new EffectivePermissions(decisions);
         }
 
+        /// <summary>
+        /// ApplyGroupRecursiveNoLockを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private void ApplyGroupRecursive_NoLock(string groupName, HashSet<string> visited, Dictionary<string, bool> decisions)
         {
             if (string.IsNullOrWhiteSpace(groupName))
@@ -724,6 +929,9 @@ namespace BasisPermissions
             }
         }
 
+        /// <summary>
+        /// GetOrCreateUserNoLockを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         private PermissionUser GetOrCreateUser_NoLock(string uuid)
         {
             if (_store.Users.TryGetValue(uuid, out var u))
@@ -735,6 +943,9 @@ namespace BasisPermissions
             return u;
         }
 
+        /// <summary>
+        /// GetOrCreateGroupNoLockを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         private PermissionGroup GetOrCreateGroup_NoLock(string name)
         {
             if (_store.Groups.TryGetValue(name, out var g))
@@ -964,6 +1175,9 @@ namespace BasisPermissions
                 return store;
             }
 
+            /// <summary>
+            /// Saveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static void Save(string path, PermissionStore store)
             {
                 string? dir = Path.GetDirectoryName(path);
@@ -1037,6 +1251,10 @@ namespace BasisPermissions
                 xw.WriteEndDocument();
             }
         }
+        /// <summary>
+        /// 権限Integrationの責務をまとめるクラスです。
+        /// Security領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public static class PermissionIntegration
         {
             // global singleton-style instance。
@@ -1062,6 +1280,9 @@ namespace BasisPermissions
 
                 Manager.OnPermissionsChanged += HandlePermissionsChanged;
             }
+            /// <summary>
+            /// InitWithoutDiscを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static void InitWithoutDisc()
             {
                 // file が empty / nonexistent の場合、optional default を適用する。
@@ -1086,16 +1307,25 @@ namespace BasisPermissions
                 _playerMeta.TryRemove(uuid, out _);
             }
 
+            /// <summary>
+            /// TryGetプレイヤーMetaを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+            /// </summary>
             public static bool TryGetPlayerMeta(string uuid, out ClientMetaDataMessage meta)
             {
                 return _playerMeta.TryGetValue(uuid, out meta);
             }
 
+            /// <summary>
+            /// Evict権限Cacheを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static void EvictPermissionCache(string uuid)
             {
                 Manager.EvictUserCache(uuid);
             }
 
+            /// <summary>
+            /// HasValidRequirementを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static bool HasValidRequirement(string uuid, string permNode)
             {
                 bool hasPermission = Manager.Has(uuid, permNode);
@@ -1103,6 +1333,9 @@ namespace BasisPermissions
 
                 return hasPermission || isAdmin;
             }
+            /// <summary>
+            /// HasValidRequirementを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static bool HasValidRequirement(NetPeer peer, string permNode)
             {
                 if (NetworkServer.AuthIdentity.NetIDToUUID(peer, out string uuid))
@@ -1126,6 +1359,9 @@ namespace BasisPermissions
                 }
             }
 
+            /// <summary>
+            /// 処理PermissionsChangedを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+            /// </summary>
             private static void HandlePermissionsChanged(string uuid)
             {
                 if (uuid != null)

@@ -22,14 +22,41 @@ namespace BasisNetworkServer.Security
         private static int _playspaceMoverLocked;
         private static int _directConnectLocked;
 
+        /// <summary>
+        /// AvatarsLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool AvatarsLocked => Interlocked.CompareExchange(ref _avatarsLocked, 0, 0) == 1;
+        /// <summary>
+        /// PropsLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool PropsLocked => Interlocked.CompareExchange(ref _propsLocked, 0, 0) == 1;
+        /// <summary>
+        /// WorldsLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool WorldsLocked => Interlocked.CompareExchange(ref _worldsLocked, 0, 0) == 1;
+        /// <summary>
+        /// ServersLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool ServersLocked => Interlocked.CompareExchange(ref _serversLocked, 0, 0) == 1;
+        /// <summary>
+        /// ThirdPersonDisabledを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool ThirdPersonDisabled => Interlocked.CompareExchange(ref _thirdPersonDisabled, 0, 0) == 1;
+        /// <summary>
+        /// AdditionalアバターDataLockを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool AdditionalAvatarDataLock => Interlocked.CompareExchange(ref _additionalAvatarDataLock, 0, 0) == 1;
+        /// <summary>
+        /// カメラMetadataDisallowMaskを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public static byte CameraMetadataDisallowMask => (byte)Interlocked.CompareExchange(ref _cameraMetadataDisallowMask, 0, 0);
+        /// <summary>
+        /// PlayspaceMoverLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool PlayspaceMoverLocked => Interlocked.CompareExchange(ref _playspaceMoverLocked, 0, 0) == 1;
+        /// <summary>
+        /// DirectConnectLockedを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool DirectConnectLocked => Interlocked.CompareExchange(ref _directConnectLocked, 0, 0) == 1;
 
         /// <summary>
@@ -95,6 +122,9 @@ namespace BasisNetworkServer.Security
         /// </summary>
         public static void SetCameraMetadataDisallowMask(byte mask) => Interlocked.Exchange(ref _cameraMetadataDisallowMask, mask);
 
+        /// <summary>
+        /// Toggleを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool Toggle(ref int field)
         {
             int prev, next;

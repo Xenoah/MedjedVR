@@ -7,12 +7,19 @@ using Basis.Network.Core;
 
 namespace Basis
 {
+    /// <summary>
+    /// Programの責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     partial class Program
     {
         private const double DriverTickMs = 15.0;
         private const double MovementIntervalMs = 90.0;
         private static volatile bool _running = true;
 
+        /// <summary>
+        /// Mainを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static async Task Main(string[] args)
         {
             ErrorHandlers.AttachGlobalHandlers();
@@ -42,6 +49,9 @@ namespace Basis
             await Task.Delay(-1); // main を生かし続ける
         }
 
+        /// <summary>
+        /// Stopクライアントを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public static void StopClient(ClientManager manager, int index)
         {
             var peer = Volatile.Read(ref manager.FinalPeers[index]);
@@ -51,6 +61,9 @@ namespace Basis
             }
         }
 
+        /// <summary>
+        /// StartクライアントDriverLoopsを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         private static void StartClientDriverLoops(NetworkClient[] clients, NetPeer[] peers)
         {
             int count = peers.Length;
@@ -76,6 +89,9 @@ namespace Basis
             }
         }
 
+        /// <summary>
+        /// DriveSliceを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void DriveSlice(NetworkClient[] clients, NetPeer[] peers, int start, int end, double phaseOffsetMs)
         {
             var sw = Stopwatch.StartNew();
@@ -115,6 +131,9 @@ namespace Basis
             }
         }
 
+        /// <summary>
+        /// StartRandomReconnectLoopを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         private static async Task StartRandomReconnectLoop(ClientManager clientManager)
         {
             int totalClients = clientManager.ClientCount;

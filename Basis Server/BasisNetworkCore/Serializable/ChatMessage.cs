@@ -2,6 +2,10 @@ using Basis.Network.Core;
 using System;
 using System.Text;
 
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -29,6 +33,9 @@ public static partial class SerializableBasis
         /// </summary>
         public bool playNotificationSound;
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             playNotificationSound = true;
@@ -66,6 +73,9 @@ public static partial class SerializableBasis
             }
         }
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             if (payload == null || payload.Length == 0)

@@ -1,13 +1,35 @@
 namespace Basis.Network.Core.Compression
 {
+    /// <summary>
+    /// BasisアバターBitPackingの責務をまとめるクラスです。
+    /// Compression領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisAvatarBitPacking
     {
+        /// <summary>
+        /// FloatSizeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int FloatSize = sizeof(float);
+        /// <summary>
+        /// UShortSizeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int UShortSize = sizeof(ushort);
+        /// <summary>
+        /// Vector3Sizeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int Vector3Size = 3 * FloatSize;
 
+        /// <summary>
+        /// WritePositionを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WritePosition = 12;
+        /// <summary>
+        /// WriteScaleを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteScale = 2;
+        /// <summary>
+        /// WriteRotationを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteRotation = 7;
         // TPose からの Hips ローカル位置差分。座り姿勢や IK 駆動の Hips 姿勢を
         // リモートへ届けるために送る (固定範囲の ushort x3。下の HipsDeltaRange を参照)。
@@ -21,6 +43,9 @@ namespace Basis.Network.Core.Compression
         // 視覚的な揺れより十分細かく、しゃがみ/着席の上書きもクリップせず収まる。
         public const float HipsDeltaRange = 1f;
 
+        /// <summary>
+        /// TailBytesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int TailBytes = WriteScale + WriteRotation + WriteHipsDelta + WriteHipsRotation; // 22
 
         // 品質段階を拡張 (Low/Medium/High の基準は維持)
@@ -47,6 +72,9 @@ namespace Basis.Network.Core.Compression
         /// </summary>
         public static int MuscleBytes(BitQuality q) => BasisBoneRotationCompression.RotationBytes(q);
 
+        /// <summary>
+        /// ConvertToSizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static int ConvertToSize(BitQuality q)
         {
             // Position (12) + BoneRotations (可変) + Posit16 Scale (2) + Rotation (7) + Hips 末尾部。
@@ -76,6 +104,9 @@ namespace Basis.Network.Core.Compression
             55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,
             75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,
         };
+        /// <summary>
+        /// BITSPERSLOTHIGHを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public static readonly byte[] BITS_PER_SLOT_HIGH = new byte[]
 {
             // 脊柱/胸/頭
@@ -170,6 +201,9 @@ namespace Basis.Network.Core.Compression
             8,11,8,8,
         };
 
+        /// <summary>
+        /// BITSPERSLOTLOWを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public static readonly byte[] BITS_PER_SLOT_LOW = new byte[]
         {
             // 脊柱/胸/頭
@@ -215,6 +249,9 @@ namespace Basis.Network.Core.Compression
             8,9,8,8,
             8,9,8,8,
         };
+        /// <summary>
+        /// BITSPERSLOTVERYLOWを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         public static readonly byte[] BITS_PER_SLOT_VERY_LOW = new byte[]
         {
     // 脊柱 / 胸 / 頭 (0..14)
@@ -260,10 +297,25 @@ namespace Basis.Network.Core.Compression
 8,8,8,8,
 8,8,8,8,
         };
+        /// <summary>
+        /// TotalMusclesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int TotalMuscles = 95;
+        /// <summary>
+        /// UShortMinを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public const ushort UShortMin = ushort.MinValue;
+        /// <summary>
+        /// UShortMaxを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public const ushort UShortMax = ushort.MaxValue;
+        /// <summary>
+        /// UShortRangeDifferenceを保持します。型は ushort で、関連処理から共有される値です。
+        /// </summary>
         public const ushort UShortRangeDifference = UShortMax - UShortMin;
+        /// <summary>
+        /// MinMuscleを保持します。型は float[] で、関連処理から共有される値です。
+        /// </summary>
         public static float[] MinMuscle = new float[]
         {
         -40f, -40f, -40f, -40f, -40f, -40f,
@@ -288,6 +340,9 @@ namespace Basis.Network.Core.Compression
         -45f, -45f
         };
 
+        /// <summary>
+        /// MaxMuscleを保持します。型は float[] で、関連処理から共有される値です。
+        /// </summary>
         public static float[] MaxMuscle = new float[]
         {
         40f, 40f, 40f, 40f, 40f, 40f,
@@ -312,6 +367,9 @@ namespace Basis.Network.Core.Compression
         45f, 45f
         };
 
+        /// <summary>
+        /// RangeMuscleを保持します。型は float[] で、関連処理から共有される値です。
+        /// </summary>
         public static float[] RangeMuscle = new float[]
         {
         80f, 80f, 80f, 80f, 80f, 80f,
@@ -335,6 +393,9 @@ namespace Basis.Network.Core.Compression
         90f, 90f, 100f, 40f,
         90f, 90f
         };
+        /// <summary>
+        /// ReadBitsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static uint ReadBits(byte[] src, ref int bitPos, int bitCount)
         {
             int bytePos = bitPos >> 3;

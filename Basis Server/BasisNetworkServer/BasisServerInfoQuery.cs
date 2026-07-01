@@ -49,16 +49,25 @@ namespace BasisServerHandle
 
         private static readonly Stopwatch _clock = Stopwatch.StartNew();
 
+        /// <summary>
+        /// Subscribeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Subscribe()
         {
             NetworkServer.Listener.NetworkReceiveUnconnectedEvent += HandleQuery;
         }
 
+        /// <summary>
+        /// Unsubscribeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Unsubscribe()
         {
             NetworkServer.Listener.NetworkReceiveUnconnectedEvent -= HandleQuery;
         }
 
+        /// <summary>
+        /// 処理Queryを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleQuery(IPEndPoint remoteEndPoint, NetPacketReader reader)
         {
             try
@@ -127,6 +136,9 @@ namespace BasisServerHandle
             }
         }
 
+        /// <summary>
+        /// ShouldRespondPerIpを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool ShouldRespondPerIp(IPAddress address)
         {
             // 固有 source IP の flood で dict が埋まっているなら消去する。荒いが上限付きで、
@@ -144,6 +156,9 @@ namespace BasisServerHandle
             return true;
         }
 
+        /// <summary>
+        /// TryConsumeGlobalTokenを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         private static bool TryConsumeGlobalToken()
         {
             lock (_bucketLock)

@@ -12,13 +12,25 @@ namespace Basis.Network.Core
 	/// transcript (両方の公開鍵) は channel binding のため HKDF salt に混ぜ込む。
 	public static class BasisCryptoHandshake
 	{
+		/// <summary>
+		/// PublicKeySizeを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public const int PublicKeySize = BasisX25519.KeySize;
+		/// <summary>
+		/// PrivateKeySizeを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public const int PrivateKeySize = BasisX25519.KeySize;
+		/// <summary>
+		/// KeySizeを保持します。型は int で、関連処理から共有される値です。
+		/// </summary>
 		public const int KeySize = BasisAeadCipher.KeySize;
 
 		private static readonly byte[] InfoAB = Encoding.ASCII.GetBytes("basis-crypto-v1-ab");
 		private static readonly byte[] InfoBA = Encoding.ASCII.GetBytes("basis-crypto-v1-ba");
 
+		/// <summary>
+		/// GenerateKeyPairを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		public static void GenerateKeyPair(out byte[] privateKey, out byte[] publicKey)
 			=> BasisX25519.GenerateKeyPair(out privateKey, out publicKey);
 
@@ -65,6 +77,9 @@ namespace Basis.Network.Core
 			}
 		}
 
+		/// <summary>
+		/// Concatを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static byte[] Concat(ReadOnlySpan<byte> a, ReadOnlySpan<byte> b)
 		{
 			var result = new byte[a.Length + b.Length];
@@ -73,6 +88,9 @@ namespace Basis.Network.Core
 			return result;
 		}
 
+		/// <summary>
+		/// Compareを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+		/// </summary>
 		private static int Compare(ReadOnlySpan<byte> a, ReadOnlySpan<byte> b)
 		{
 			int n = Math.Min(a.Length, b.Length);

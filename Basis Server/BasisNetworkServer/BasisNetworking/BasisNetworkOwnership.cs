@@ -6,12 +6,22 @@ using System.Linq;
 using static DarkRift.Basis_Common.Serializable.SerializableBasis;
 namespace Basis.Network.Server.Ownership
 {
+    /// <summary>
+    /// BasisネットワークOwnershipの責務をまとめるクラスです。
+    /// ing領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisNetworkOwnership
     {
         // object ID で簡単に lookup するための dictionary (Object unique string ID -> Ownership ID)。
         public static ConcurrentDictionary<string, ushort> ownershipByObjectId = new ConcurrentDictionary<string, ushort>();
 
+        /// <summary>
+        /// LockObjectを保持します。型は object で、関連処理から共有される値です。
+        /// </summary>
         public static readonly object LockObject = new object();  // For synchronized multi-step operations
+        /// <summary>
+        /// SendOutOwnershipInformationを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendOutOwnershipInformation(NetPeer Peer)
         {
             NetDataWriter Writer = NetworkServer.RentWriter();
@@ -26,6 +36,9 @@ namespace Basis.Network.Server.Ownership
             }
             NetworkServer.ReturnWriter(Writer);
         }
+        /// <summary>
+        /// OwnershipResponseを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void OwnershipResponse(NetPacketReader Reader, NetPeer Peer)
         {
             OwnershipTransferMessage ownershipTransferMessage = new OwnershipTransferMessage();

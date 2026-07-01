@@ -28,6 +28,9 @@ namespace BasisNetworkServer
         private static long _lastInErrors = -1;
         private static long _lastInCsumErrors = -1;
 
+        /// <summary>
+        /// Startを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public static void Start()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return;
@@ -50,12 +53,18 @@ namespace BasisNetworkServer
             BNL.Log("[UdpDropMonitor] Started; sampling /proc/net/snmp every 10s");
         }
 
+        /// <summary>
+        /// Stopを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public static void Stop()
         {
             _running = false;
             _samplerThread = null;
         }
 
+        /// <summary>
+        /// Runを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Run()
         {
             while (_running)
@@ -66,6 +75,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// Sampleを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Sample()
         {
             if (!TryReadSnmpUdp(out long rcvbufErrors, out long inErrors, out long inCsumErrors)) return;

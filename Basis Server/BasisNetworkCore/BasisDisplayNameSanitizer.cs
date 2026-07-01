@@ -20,6 +20,9 @@ namespace Basis.Network.Core
             (char)0x180E,
         };
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string Sanitize(string displayName)
         {
             if (string.IsNullOrEmpty(displayName))
@@ -48,11 +51,17 @@ namespace Basis.Network.Core
             return builder.ToString().Trim();
         }
 
+        /// <summary>
+        /// IsValidを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsValid(string displayName)
         {
             return !string.IsNullOrEmpty(Sanitize(displayName));
         }
 
+        /// <summary>
+        /// IsInvisibleGlyphを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool IsInvisibleGlyph(char character)
         {
             for (int index = 0; index < InvisibleGlyphs.Length; index++)

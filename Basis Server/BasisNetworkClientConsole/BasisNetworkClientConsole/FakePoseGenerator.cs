@@ -28,6 +28,9 @@ namespace BasisNetworkClientConsole
         private static readonly bool[] IsAnimated;
         private static readonly ulong[][] BasePackedByQuality;
 
+        /// <summary>
+        /// FakePoseGeneratorを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static FakePoseGenerator()
         {
             BasePose = new float[BoneCount * 4];
@@ -40,6 +43,9 @@ namespace BasisNetworkClientConsole
             PrecomputeBasePacked();
         }
 
+        /// <summary>
+        /// MarkAnimatedSlotsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void MarkAnimatedSlots()
         {
             IsAnimated[0] = true; // Spine
@@ -54,6 +60,9 @@ namespace BasisNetworkClientConsole
                 IsAnimated[slot] = true; // finger proximal
         }
 
+        /// <summary>
+        /// PrecomputeBasePackedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void PrecomputeBasePacked()
         {
             float[] ranges = BasisBoneRotationCompression.MAX_COMPONENT;
@@ -234,6 +243,9 @@ namespace BasisNetworkClientConsole
             WriteCompressedQuat(dst, offset, qx, qy, qz, qw);
         }
 
+        /// <summary>
+        /// WriteCompressedQuatを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WriteCompressedQuat(byte[] dst, int offset, float qx, float qy, float qz, float qw)
         {
             // 絶対値が最大の component を探す。
@@ -362,12 +374,18 @@ namespace BasisNetworkClientConsole
             BasePose[idx + 3] = w;
         }
 
+        /// <summary>
+        /// SetAxisAngleを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         private static void SetAxisAngle(int slot, float ax, float ay, float az, float degrees)
         {
             AxisAngleToQuat(ax, ay, az, degrees, out float qx, out float qy, out float qz, out float qw);
             SetQuat(slot, qx, qy, qz, qw);
         }
 
+        /// <summary>
+        /// AxisAngleToQuatを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void AxisAngleToQuat(float ax, float ay, float az, float degrees, out float qx, out float qy, out float qz, out float qw)
         {
             float half = degrees * Deg2Rad * 0.5f;
@@ -396,6 +414,9 @@ namespace BasisNetworkClientConsole
             rz = aw * bz + ax * by - ay * bx + az * bw;
         }
 
+        /// <summary>
+        /// Normalizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Normalize(ref float x, ref float y, ref float z, ref float w)
         {
             float len = MathF.Sqrt(x * x + y * y + z * z + w * w);
@@ -410,6 +431,9 @@ namespace BasisNetworkClientConsole
             }
         }
 
+        /// <summary>
+        /// QuantizeSmallを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static ushort QuantizeSmall(float v)
         {
             if (v < -InvSqrt2) v = -InvSqrt2;

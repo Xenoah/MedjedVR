@@ -21,9 +21,16 @@ namespace Basis.Network.Server.Auth
         public UserPassword(string password) { V = password; }
     }
 
+    /// <summary>
+    /// Deserializedの責務をまとめる構造体です。
+    /// Auth領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     internal readonly struct Deserialized
     {
         public readonly UserPassword Password { get; }
+        /// <summary>
+        /// Deserializedを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public Deserialized(byte[] Bytesmsg)
         {
             string password = Encoding.UTF8.GetString(Bytesmsg);
@@ -31,6 +38,10 @@ namespace Basis.Network.Server.Auth
         }
     }
 
+    /// <summary>
+    /// Password認証の責務をまとめるクラスです。
+    /// Auth領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class PasswordAuth : IAuth
     {
         private readonly ServerPassword serverPassword;
@@ -41,6 +52,9 @@ namespace Basis.Network.Server.Auth
             this.serverPassword = new ServerPassword(serverPassword);
         }
 
+        /// <summary>
+        /// CheckPasswordを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static bool CheckPassword(ServerPassword serverPassword, UserPassword userPassword)
         {
             if (string.IsNullOrEmpty(serverPassword.V))
@@ -66,6 +80,9 @@ namespace Basis.Network.Server.Auth
             }
         }
 
+        /// <summary>
+        /// IsAuthenticatedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public bool IsAuthenticated(byte[] Bytesmsg)
         {
             var deserialized = new Deserialized(Bytesmsg);

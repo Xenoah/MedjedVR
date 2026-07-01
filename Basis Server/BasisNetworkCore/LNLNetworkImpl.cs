@@ -5,6 +5,10 @@ using System.Net.Sockets;
 namespace Basis.Network.Core
 {
 
+    /// <summary>
+    /// イベントBasedNetListenerの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public partial class EventBasedNetListener : LiteNetLib.INetEventListener
     {
         void LiteNetLib.INetEventListener.OnConnectionRequest(LiteNetLib.ConnectionRequest request)
@@ -58,8 +62,15 @@ namespace Basis.Network.Core
         }
     }
 
+    /// <summary>
+    /// DisconnectInfoの責務をまとめる構造体です。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public partial struct DisconnectInfo
     {
+        /// <summary>
+        /// DisconnectInfoを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal DisconnectInfo(LiteNetLib.DisconnectInfo info)
         {
             NetPacketReader reader = new NetPacketReader(info.AdditionalData);
@@ -71,8 +82,15 @@ namespace Basis.Network.Core
         }
     }
 
+    /// <summary>
+    /// Net統計の責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed partial class NetStatistics
     {
+        /// <summary>
+        /// Net統計を生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal NetStatistics(LiteNetLib.NetStatistics stats)
         {
             PacketsSent = stats.PacketsSent;
@@ -83,27 +101,47 @@ namespace Basis.Network.Core
         }
     }
 
+    /// <summary>
+    /// NetパケットReaderの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public partial class NetPacketReader
     {
+        /// <summary>
+        /// NetパケットReaderを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal NetPacketReader(LiteNetLib.NetPacketReader reader) : base((LiteNetLib.Utils.NetDataReader)reader)
         {
             RecycleInternal = () => reader.Recycle();
         }
     }
 
+    /// <summary>
+    /// LNL接続Requestの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class LNLConnectionRequest : ConnectionRequest
     {
         readonly LiteNetLib.ConnectionRequest request;
         readonly NetDataReader data;
 
+        /// <summary>
+        /// LNL接続Requestを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal LNLConnectionRequest(LiteNetLib.ConnectionRequest request)
         {
             this.request = request;
             data = new NetDataReader(request.Data);
         }
 
+        /// <summary>
+        /// Dataを保持します。型は NetDataReader で、関連処理から共有される値です。
+        /// </summary>
         public NetDataReader Data => data;
 
+        /// <summary>
+        /// RemoteEndPointを保持します。型は IPEndPoint で、関連処理から共有される値です。
+        /// </summary>
         public IPEndPoint RemoteEndPoint => request.RemoteEndPoint;
 
         NetPeer ConnectionRequest.Accept()
@@ -117,10 +155,17 @@ namespace Basis.Network.Core
         }
     }
 
+    /// <summary>
+    /// LNLNetピアの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class LNLNetPeer : NetPeer
     {
         private readonly LiteNetLib.NetPeer peer;
 
+        /// <summary>
+        /// LNLNetピアを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         internal LNLNetPeer(LiteNetLib.NetPeer lnlPeer)
         {
             peer = lnlPeer;
@@ -181,6 +226,9 @@ namespace Basis.Network.Core
             peer.SendUnreliableRawMerge(data, offset, length, channelNumber, patchOffset, patchValue);
         }
 
+        /// <summary>
+        /// Equalsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public override bool Equals(object obj)
         {
             if (obj == null || !(obj is LNLNetPeer))
@@ -193,16 +241,29 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// GetHashCodeを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public override int GetHashCode()
         {
             return peer.GetHashCode();
         }
     }
 
+    /// <summary>
+    /// LNLNet管理の責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class LNLNetManager : NetManager
     {
+        /// <summary>
+        /// managerを保持します。型は LiteNetLib.NetManager で、関連処理から共有される値です。
+        /// </summary>
         public LiteNetLib.NetManager manager;
 
+        /// <summary>
+        /// LNLNet管理を生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public LNLNetManager(EventBasedNetListener listener, Configuration configuration)
         {
             LNLTransportConfig lnl = BasisTransportConfigStore.Get<LNLTransportConfig>(BasisNetworkStackRegistry.LiteNetLibId);
@@ -233,31 +294,49 @@ namespace Basis.Network.Core
                 MultiSocketCount = lnl.MultiSocketCount
             };
         }
+        /// <summary>
+        /// Startを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public void Start(IPAddress IPv4Address, IPAddress IPv6Address, int SetPort)
         {
             manager.Start(IPv4Address, IPv6Address, SetPort);
         }
 
+        /// <summary>
+        /// StartManualを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         public void StartManual(IPAddress IPv4Address, IPAddress IPv6Address, int SetPort)
         {
             manager.StartInManualMode(IPv4Address, IPv6Address, SetPort);
         }
 
+        /// <summary>
+        /// Pollイベントを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void PollEvents()
         {
             manager.PollEvents();
         }
 
+        /// <summary>
+        /// ManualUpdateを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void ManualUpdate(float elapsedMilliseconds)
         {
             manager.ManualUpdate(elapsedMilliseconds);
         }
 
+        /// <summary>
+        /// Stopを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+        /// </summary>
         public void Stop()
         {
             manager.Stop();
         }
 
+        /// <summary>
+        /// Connectを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public Basis.Network.Core.NetPeer Connect(string sIP, int port, NetDataWriter Writer)
         {
 
@@ -265,13 +344,22 @@ namespace Basis.Network.Core
             return new LNLNetPeer(peer);
         }
 
+        /// <summary>
+        /// SendUnconnectedメッセージを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public bool SendUnconnectedMessage(NetDataWriter writer, IPEndPoint remoteEndPoint)
         {
             return manager.SendUnconnectedMessage(writer.AsReadOnlySpan(), remoteEndPoint);
         }
 
+        /// <summary>
+        /// ConnectedPeersCountを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int ConnectedPeersCount => manager.ConnectedPeersCount;
 
+        /// <summary>
+        /// 統計を保持します。型は NetStatistics で、関連処理から共有される値です。
+        /// </summary>
         public NetStatistics Statistics => new NetStatistics(manager.Statistics);
     }
 }

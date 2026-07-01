@@ -10,10 +10,23 @@ using System.Text;
 using System.Threading;
 
 namespace Basis.Network.Core {
+    /// <summary>
+    /// NetDataReaderの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class NetDataReader
     {
+        /// <summary>
+        /// dataを保持します。型は byte[] で、関連処理から共有される値です。
+        /// </summary>
         protected byte[] _data;
+        /// <summary>
+        /// positionを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         protected int _position;
+        /// <summary>
+        /// dataSizeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         protected int _dataSize;
         private int _offset;
 
@@ -58,11 +71,17 @@ namespace Basis.Network.Core {
             get => _dataSize - _position;
         }
 
+        /// <summary>
+        /// SkipBytesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void SkipBytes(int count)
         {
             _position += count;
         }
 
+        /// <summary>
+        /// SetPositionを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         public void SetPosition(int position)
         {
             _position = position;
@@ -84,6 +103,9 @@ namespace Basis.Network.Core {
             _dataSize = source.Length;
         }
 
+        /// <summary>
+        /// SetSourceを設定します。以後のネットワーク処理で参照される状態を更新します。
+        /// </summary>
         public void SetSource(byte[] source, int offset, int maxSize)
         {
             _data = source;
@@ -97,6 +119,9 @@ namespace Basis.Network.Core {
             _position = reader.Position;
         }
 
+        /// <summary>
+        /// NetDataReaderを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public NetDataReader()
         {
 
@@ -112,6 +137,9 @@ namespace Basis.Network.Core {
             SetSource(source);
         }
 
+        /// <summary>
+        /// NetDataReaderを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public NetDataReader(byte[] source, int offset, int maxSize)
         {
             SetSource(source, offset, maxSize);
@@ -145,71 +173,113 @@ namespace Basis.Network.Core {
             result = GetByte();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out sbyte result)
         {
             result = (sbyte)GetByte();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out bool result)
         {
             result = GetBool();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out char result)
         {
             result = GetChar();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out ushort result)
         {
             result = GetUShort();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out short result)
         {
             result = GetShort();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out ulong result)
         {
             result = GetULong();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out long result)
         {
             result = GetLong();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out uint result)
         {
             result = GetUInt();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out int result)
         {
             result = GetInt();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out double result)
         {
             result = GetDouble();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out float result)
         {
             result = GetFloat();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out string result)
         {
             result = GetString();
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out string result, int maxLength)
         {
             result = GetString(maxLength);
         }
         
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void Get(out Guid result)
         {
             result = GetGuid();
@@ -229,6 +299,9 @@ namespace Basis.Network.Core {
             return res;
         }
 
+        /// <summary>
+        /// GetSByteを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public sbyte GetSByte()
         {
             return (sbyte)GetByte();
@@ -276,46 +349,73 @@ namespace Basis.Network.Core {
             return GetArray<bool>(1);
         }
 
+        /// <summary>
+        /// GetUShortArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ushort[] GetUShortArray()
         {
             return GetArray<ushort>(2);
         }
 
+        /// <summary>
+        /// GetShortArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public short[] GetShortArray()
         {
             return GetArray<short>(2);
         }
 
+        /// <summary>
+        /// GetIntArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public int[] GetIntArray()
         {
             return GetArray<int>(4);
         }
 
+        /// <summary>
+        /// GetUIntArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public uint[] GetUIntArray()
         {
             return GetArray<uint>(4);
         }
 
+        /// <summary>
+        /// GetFloatArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public float[] GetFloatArray()
         {
             return GetArray<float>(4);
         }
 
+        /// <summary>
+        /// GetDoubleArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public double[] GetDoubleArray()
         {
             return GetArray<double>(8);
         }
 
+        /// <summary>
+        /// GetLongArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public long[] GetLongArray()
         {
             return GetArray<long>(8);
         }
 
+        /// <summary>
+        /// GetULongArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ulong[] GetULongArray()
         {
             return GetArray<ulong>(8);
         }
 
+        /// <summary>
+        /// GetStringArrayを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public string[] GetStringArray()
         {
             ushort length = GetUShort();
@@ -342,16 +442,25 @@ namespace Basis.Network.Core {
             return arr;
         }
 
+        /// <summary>
+        /// GetBoolを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public bool GetBool()
         {
             return GetByte() == 1;
         }
 
+        /// <summary>
+        /// GetCharを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public char GetChar()
         {
             return (char)GetUShort();
         }
 
+        /// <summary>
+        /// GetUShortを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ushort GetUShort()
         {
             ushort result = BinaryPrimitives.ReadUInt16LittleEndian(_data.AsSpan(_position));
@@ -359,6 +468,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetShortを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public short GetShort()
         {
             short result = BinaryPrimitives.ReadInt16LittleEndian(_data.AsSpan(_position));
@@ -366,6 +478,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetLongを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public long GetLong()
         {
             long result = BinaryPrimitives.ReadInt64LittleEndian(_data.AsSpan(_position));
@@ -373,6 +488,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetULongを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ulong GetULong()
         {
             ulong result = BinaryPrimitives.ReadUInt64LittleEndian(_data.AsSpan(_position));
@@ -380,6 +498,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetIntを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public int GetInt()
         {
             int result = BinaryPrimitives.ReadInt32LittleEndian(_data.AsSpan(_position));
@@ -387,6 +508,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetUIntを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public uint GetUInt()
         {
             uint result = BinaryPrimitives.ReadUInt32LittleEndian(_data.AsSpan(_position));
@@ -394,6 +518,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetFloatを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public float GetFloat()
         {
             int bits = BinaryPrimitives.ReadInt32LittleEndian(_data.AsSpan(_position));
@@ -401,6 +528,9 @@ namespace Basis.Network.Core {
             return BitConverter.Int32BitsToSingle(bits);
         }
 
+        /// <summary>
+        /// GetDoubleを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public double GetDouble()
         {
             long bits = BinaryPrimitives.ReadInt64LittleEndian(_data.AsSpan(_position));
@@ -428,6 +558,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetStringを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public string GetString()
         {
             ushort size = GetUShort();
@@ -442,6 +575,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetLargeStringを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public string GetLargeString()
         {
             int size = GetInt();
@@ -454,6 +590,9 @@ namespace Basis.Network.Core {
             return result;
         }
         
+        /// <summary>
+        /// GetGuidを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public Guid GetGuid()
         {
             if (16 > _dataSize - _position)
@@ -463,6 +602,9 @@ namespace Basis.Network.Core {
             return result;
         }
 
+        /// <summary>
+        /// GetBytesSegmentを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ArraySegment<byte> GetBytesSegment(int count)
         {
             if (count < 0 || count > _dataSize - _position)
@@ -472,6 +614,9 @@ namespace Basis.Network.Core {
             return segment;
         }
 
+        /// <summary>
+        /// GetRemainingBytesSegmentを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ArraySegment<byte> GetRemainingBytesSegment()
         {
             ArraySegment<byte> segment = new ArraySegment<byte>(_data, _position, AvailableBytes);
@@ -494,16 +639,25 @@ namespace Basis.Network.Core {
         // }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// GetRemainingBytesSpanを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ReadOnlySpan<byte> GetRemainingBytesSpan()
         {
             return new ReadOnlySpan<byte>(_data, _position, _dataSize - _position);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// GetRemainingBytesMemoryを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public ReadOnlyMemory<byte> GetRemainingBytesMemory()
         {
             return new ReadOnlyMemory<byte>(_data, _position, _dataSize - _position);
         }
+        /// <summary>
+        /// GetRemainingBytesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public byte[] GetRemainingBytes()
         {
             byte[] outgoingData = new byte[AvailableBytes];
@@ -512,6 +666,9 @@ namespace Basis.Network.Core {
             return outgoingData;
         }
 
+        /// <summary>
+        /// GetBytesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void GetBytes(byte[] destination, int start, int count)
         {
             if (count < 0 || count > _dataSize - _position)
@@ -520,6 +677,9 @@ namespace Basis.Network.Core {
             _position += count;
         }
 
+        /// <summary>
+        /// GetBytesを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public void GetBytes(byte[] destination, int count)
         {
             if (count < 0 || count > _dataSize - _position)
@@ -528,11 +688,17 @@ namespace Basis.Network.Core {
             _position += count;
         }
 
+        /// <summary>
+        /// GetSBytesWithLengthを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public sbyte[] GetSBytesWithLength()
         {
             return GetArray<sbyte>(1);
         }
 
+        /// <summary>
+        /// GetBytesWithLengthを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public byte[] GetBytesWithLength()
         {
             return GetArray<byte>(1);
@@ -541,61 +707,97 @@ namespace Basis.Network.Core {
 
         #region PeekMethods
 
+        /// <summary>
+        /// PeekByteを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public byte PeekByte()
         {
             return _data[_position];
         }
 
+        /// <summary>
+        /// PeekSByteを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public sbyte PeekSByte()
         {
             return (sbyte)_data[_position];
         }
 
+        /// <summary>
+        /// PeekBoolを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public bool PeekBool()
         {
             return _data[_position] == 1;
         }
 
+        /// <summary>
+        /// PeekCharを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public char PeekChar()
         {
             return (char)PeekUShort();
         }
 
+        /// <summary>
+        /// PeekUShortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public ushort PeekUShort()
         {
             return BinaryPrimitives.ReadUInt16LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekShortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public short PeekShort()
         {
             return BinaryPrimitives.ReadInt16LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekLongを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public long PeekLong()
         {
             return BinaryPrimitives.ReadInt64LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekULongを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public ulong PeekULong()
         {
             return BinaryPrimitives.ReadUInt64LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekIntを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public int PeekInt()
         {
             return BinaryPrimitives.ReadInt32LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekUIntを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public uint PeekUInt()
         {
             return BinaryPrimitives.ReadUInt32LittleEndian(_data.AsSpan(_position));
         }
 
+        /// <summary>
+        /// PeekFloatを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public float PeekFloat()
         {
             return BitConverter.Int32BitsToSingle(BinaryPrimitives.ReadInt32LittleEndian(_data.AsSpan(_position)));
         }
 
+        /// <summary>
+        /// PeekDoubleを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public double PeekDouble()
         {
             return BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(_data.AsSpan(_position)));
@@ -616,6 +818,9 @@ namespace Basis.Network.Core {
                 NetDataWriter.uTF8Encoding.Value.GetString(_data, _position + 2, actualSize);
         }
 
+        /// <summary>
+        /// PeekStringを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public string PeekString()
         {
             // Defensive: callers (e.g., HandleDisconnectionReason) sometimes
@@ -636,6 +841,9 @@ namespace Basis.Network.Core {
         #endregion
 
         #region TryGetMethods
+        /// <summary>
+        /// TryGetByteを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetByte(out byte result)
         {
             if (AvailableBytes >= 1)
@@ -647,6 +855,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetSByteを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetSByte(out sbyte result)
         {
             if (AvailableBytes >= 1)
@@ -658,6 +869,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetBoolを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetBool(out bool result)
         {
             if (AvailableBytes >= 1)
@@ -669,6 +883,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetCharを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetChar(out char result)
         {
             if (!TryGetUShort(out ushort uShortValue))
@@ -680,6 +897,9 @@ namespace Basis.Network.Core {
             return true;
         }
 
+        /// <summary>
+        /// TryGetShortを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetShort(out short result)
         {
             if (AvailableBytes >= 2)
@@ -691,6 +911,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetUShortを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetUShort(out ushort result)
         {
             if (AvailableBytes >= 2)
@@ -702,6 +925,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetIntを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetInt(out int result)
         {
             if (AvailableBytes >= 4)
@@ -713,6 +939,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetUIntを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetUInt(out uint result)
         {
             if (AvailableBytes >= 4)
@@ -724,6 +953,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetLongを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetLong(out long result)
         {
             if (AvailableBytes >= 8)
@@ -735,6 +967,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetULongを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetULong(out ulong result)
         {
             if (AvailableBytes >= 8)
@@ -746,6 +981,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetFloatを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetFloat(out float result)
         {
             if (AvailableBytes >= 4)
@@ -757,6 +995,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetDoubleを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetDouble(out double result)
         {
             if (AvailableBytes >= 8)
@@ -768,6 +1009,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetStringを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetString(out string result)
         {
             if (AvailableBytes >= 2)
@@ -783,6 +1027,9 @@ namespace Basis.Network.Core {
             return false;
         }
 
+        /// <summary>
+        /// TryGetStringArrayを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetStringArray(out string[] result)
         {
             if (!TryGetUShort(out ushort strArrayLength)) {
@@ -803,6 +1050,9 @@ namespace Basis.Network.Core {
             return true;
         }
 
+        /// <summary>
+        /// TryGetBytesWithLengthを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public bool TryGetBytesWithLength(out byte[] result)
         {
             if (AvailableBytes >= 2)
@@ -819,6 +1069,9 @@ namespace Basis.Network.Core {
         }
         #endregion
 
+        /// <summary>
+        /// Clearを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Clear()
         {
             _position = 0;

@@ -6,10 +6,20 @@ using System.Xml.Serialization;
 
 namespace BasisNetworking.InitialData
 {
+    /// <summary>
+    /// BasisDefaultライブラリローダーの責務をまとめるクラスです。
+    /// InitalData領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisDefaultLibraryLoader
     {
+        /// <summary>
+        /// LoadedItemsを保持します。型は List<BasisDefaultLibraryConfiguration> で、関連処理から共有される値です。
+        /// </summary>
         public static List<BasisDefaultLibraryConfiguration> LoadedItems = new List<BasisDefaultLibraryConfiguration>();
 
+        /// <summary>
+        /// 読み込みXMLを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void LoadXML(string FolderName)
         {
             try
@@ -149,6 +159,9 @@ namespace BasisNetworking.InitialData
             return removed;
         }
 
+        /// <summary>
+        /// BuildUniqueFileNameを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string BuildUniqueFileName(string folder, BasisDefaultLibraryConfiguration config)
         {
             string modeName = config.Mode switch
@@ -174,6 +187,9 @@ namespace BasisNetworking.InitialData
             return baseName;
         }
 
+        /// <summary>
+        /// exampleXmlを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string exampleXml = @"<BasisDefaultLibraryConfiguration>
     <!-- 0 = Avatar, 1 = World, 2 = Prop -->
     <Mode>0</Mode>

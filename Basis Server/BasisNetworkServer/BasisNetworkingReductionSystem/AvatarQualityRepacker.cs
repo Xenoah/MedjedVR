@@ -37,6 +37,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         static readonly int[] LowOffs  = BuildBitOffsets(LowBpc);
         static readonly int[] VLowOffs = BuildBitOffsets(VLowBpc);
 
+        /// <summary>
+        /// BuildBitOffsetsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static int[] BuildBitOffsets(byte[] bpc)
         {
             var offs = new int[Slots];
@@ -126,6 +129,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             BitWriter.WriteBitsU64(dst, baseByteOffset, bitOffset, packed, totalBits);
         }
 
+        /// <summary>
+        /// EnsureBufferを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static void EnsureBuffer(ref SerializableBasis.LocalAvatarSyncMessage msg, BitQuality q, int size)
         {
             msg.DataQualityLevel = (byte)q;
@@ -146,6 +152,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             return (med, low, vlow);
         }
 
+        /// <summary>
+        /// RescaleQuantを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static uint RescaleQuant(uint qSrc, int bSrc, int bDst)
         {
             if (bSrc == bDst) return qSrc;
@@ -156,8 +165,15 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             return (uint)(num / maxSrc);
         }
 
+        /// <summary>
+        /// BitReaderの責務をまとめるクラスです。
+        /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         static class BitReader
         {
+            /// <summary>
+            /// ReadBitsU64を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static ulong ReadBitsU64(byte[] src, int baseByteOffset, int bitPos, int bitCount)
             {
                 int bytePos = baseByteOffset + (bitPos >> 3);
@@ -184,8 +200,15 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             }
         }
 
+        /// <summary>
+        /// BitWriterの責務をまとめるクラスです。
+        /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         static class BitWriter
         {
+            /// <summary>
+            /// WriteBitsU64を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+            /// </summary>
             public static void WriteBitsU64(byte[] dst, int baseByteOffset, int bitPos, ulong value, int bitCount)
             {
                 int bytePos = baseByteOffset + (bitPos >> 3);

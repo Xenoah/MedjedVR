@@ -8,11 +8,24 @@ using static SerializableBasis;
 
 namespace Basis.Network
 {
+    /// <summary>
+    /// MovementSenderの責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class MovementSender
     {
+        /// <summary>
+        /// Rotationを保持します。型は Quaternion で、関連処理から共有される値です。
+        /// </summary>
         public static Quaternion Rotation = new Quaternion(0, 0, 0, 1);
 
+        /// <summary>
+        /// PlayersCurrentPositionを保持します。型は Vector3[] で、関連処理から共有される値です。
+        /// </summary>
         public static Vector3[] PlayersCurrentPosition;
+        /// <summary>
+        /// ActiveプレイヤーDataを保持します。型は PlayerData[] で、関連処理から共有される値です。
+        /// </summary>
         public static PlayerData[] ActivePlayerData;
 
         // animation timer は全 player で共有し、player ごとの phase offset で揺らぎを付ける。
@@ -34,17 +47,36 @@ namespace Basis.Network
         // test client は init 時に explicit identity を一度書く。
         private static readonly int HipsLocalRotationOffset = HipsLocalDeltaOffset + BasisAvatarBitPacking.WriteHipsDelta;
 
+        /// <summary>
+        /// プレイヤーDataの責務をまとめる構造体です。
+        /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+        /// </summary>
         public struct PlayerData
         {
+            /// <summary>
+            /// Writerを保持します。型は NetDataWriter で、関連処理から共有される値です。
+            /// </summary>
             public NetDataWriter Writer;
+            /// <summary>
+            /// メッセージを保持します。型は LocalAvatarSyncMessage で、関連処理から共有される値です。
+            /// </summary>
             public LocalAvatarSyncMessage Message;
+            /// <summary>
+            /// SequenceByteを保持します。型は byte で、関連処理から共有される値です。
+            /// </summary>
             public byte SequenceByte;
+            /// <summary>
+            /// PhaseOffsetを保持します。型は float で、関連処理から共有される値です。
+            /// </summary>
             public float PhaseOffset;
         }
 
         // compressed scale は一度だけ事前計算し、すべての message で再利用する。
         private static readonly ushort CompressedScale = CompressScaleOnce(1f);
 
+        /// <summary>
+        /// Initializeを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void Initialize(int clientCount)
         {
             PlayersCurrentPosition = new Vector3[clientCount];
@@ -56,6 +88,9 @@ namespace Basis.Network
                 ActivePlayerData[i] = Generate();
             }
         }
+        /// <summary>
+        /// Generateを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static PlayerData Generate()
         {
             var message = new LocalAvatarSyncMessage
@@ -81,6 +116,9 @@ namespace Basis.Network
             };
         }
 
+        /// <summary>
+        /// WriteInitialPayloadを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WriteInitialPayload(ref LocalAvatarSyncMessage message, float phase)
         {
             // buffer が High 用の正しい size であることを保証する。
@@ -130,11 +168,17 @@ namespace Basis.Network
             dst[offset + 5] = 0x00;
             dst[offset + 6] = 0x80;
         }
+        /// <summary>
+        /// WriteScaleUShortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WriteScaleUShort(ushort value, byte[] buffer, int byteOffset)
         {
             buffer[byteOffset + 0] = (byte)value;
             buffer[byteOffset + 1] = (byte)(value >> 8);
         }
+        /// <summary>
+        /// ProcessSingleを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void ProcessSingle(NetPeer peer, int index)
         {
             if (peer == null) return;
@@ -172,6 +216,9 @@ namespace Basis.Network
             ActivePlayerData[index].Message = msg;
         }
 
+        /// <summary>
+        /// WritePositionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void WritePosition(Scripts.Networking.Compression.Vector3 position, ref byte[] buffer, ref int offset)
         {
             unsafe
@@ -187,6 +234,9 @@ namespace Basis.Network
             offset += 12;
         }
 
+        /// <summary>
+        /// WriteQuaternionToBytesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public unsafe static void WriteQuaternionToBytes(Quaternion q, ref byte[] bytes, ref int offset)
         {
             fixed (byte* ptr = &bytes[offset])
@@ -200,6 +250,9 @@ namespace Basis.Network
             offset += 16;
         }
 
+        /// <summary>
+        /// CompressScaleOnceを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static ushort CompressScaleOnce(float scale)
         {
             if (scale != 1f)
@@ -210,6 +263,9 @@ namespace Basis.Network
             return 0x4000;
         }
 
+        /// <summary>
+        /// WriteUShortを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void WriteUShort(ushort value, ref byte[] bytes, ref int offset)
         {
             bytes[offset++] = (byte)value;

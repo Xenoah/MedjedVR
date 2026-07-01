@@ -7,11 +7,27 @@ using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 [Serializable]
+/// <summary>
+/// 設定の責務をまとめるクラスです。
+/// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public class Configuration
 {
+    /// <summary>
+    /// 設定FolderNameを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public const string ConfigFolderName = "config";
+    /// <summary>
+    /// LogsFolderNameを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public const string LogsFolderName = "logs";
+    /// <summary>
+    /// InitialResourcesFolderNameを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public const string InitialResourcesFolderName = "initialresources";
+    /// <summary>
+    /// DefaultライブラリFolderNameを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public const string DefaultLibraryFolderName = "defaultlibrary";
 
     /// <summary>
@@ -23,36 +39,117 @@ public class Configuration
     /// <summary>config.xml に stamp される schema version。0 = versioning 前の file で、load 時に upgrade される。</summary>
     public int ConfigVersion = 0;
 
+    /// <summary>
+    /// ピアLimitを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int PeerLimit = ushort.MaxValue;
+    /// <summary>
+    /// SetPortを保持します。型は ushort で、関連処理から共有される値です。
+    /// </summary>
     public ushort SetPort = 4296;
     /// <summary>unconnected server-info query が返す display name。client server-list UI の row title に表示される。</summary>
     public string ServerName = "Basis Server";
     /// <summary>info query response で server name と一緒に返す短い MOTD。list UI では短い 2 行がきれいに表示される。</summary>
     public string ServerMotd = "";
+    /// <summary>
+    /// Enable統計を保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool EnableStatistics = true;
+    /// <summary>
+    /// HasFileSupportを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool HasFileSupport = true;
+    /// <summary>
+    /// HealthCheckHostを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string HealthCheckHost = "localhost";
+    /// <summary>
+    /// HealthCheckPortを保持します。型は ushort で、関連処理から共有される値です。
+    /// </summary>
     public ushort HealthCheckPort = 10666;
+    /// <summary>
+    /// HealthPathを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string HealthPath = "/health";
+    /// <summary>
+    /// BSRSMillisecondDefaultIntervalを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int BSRSMillisecondDefaultInterval = 50;
+    /// <summary>
+    /// BSRBaseMultiplierを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int BSRBaseMultiplier = 1;
+    /// <summary>
+    /// BSRSIncreaseRateを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float BSRSIncreaseRate = 0.005f;
+    /// <summary>
+    /// BSRSlowestSendRateを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float BSRSlowestSendRate = 2.55f;
+    /// <summary>
+    /// HighQualityDistanceを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float HighQualityDistance = 10f;
+    /// <summary>
+    /// MediumQualityDistanceを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float MediumQualityDistance = 20f;
+    /// <summary>
+    /// LowQualityDistanceを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float LowQualityDistance = 40f;
+    /// <summary>
+    /// OverrideAutoDiscoveryOfIpvを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool OverrideAutoDiscoveryOfIpv = false;
+    /// <summary>
+    /// IPv4Addressを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string IPv4Address = "0.0.0.0";
+    /// <summary>
+    /// IPv6Addressを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string IPv6Address = "::";
+    /// <summary>
+    /// Passwordを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string Password = "default_password";
+    /// <summary>
+    /// Use認証を保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool UseAuth = true;
+    /// <summary>
+    /// Use認証識別情報を保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool UseAuthIdentity = true;
+    /// <summary>
+    /// ネットワークStackIdを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string NetworkStackId = "";
+    /// <summary>
+    /// BasisUserRestrictionModeを保持します。型は BasisUserRestrictionMode で、関連処理から共有される値です。
+    /// </summary>
     public BasisUserRestrictionMode BasisUserRestrictionMode;
+    /// <summary>
+    /// HowManyDuplicate認証CanExistを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int HowManyDuplicateAuthCanExist = 2;
+    /// <summary>
+    /// 認証ValidationTimeOutMilisecondsを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int AuthValidationTimeOutMiliseconds = 9000;
+    /// <summary>
+    /// EnableConsoleを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool EnableConsole = true;
+    /// <summary>
+    /// DisableWriteUnlessAdminPersistentFlagを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool DisableWriteUnlessAdminPersistentFlag = true;
+    /// <summary>
+    /// DisableReadUnlessAdminPersistentFlagを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool DisableReadUnlessAdminPersistentFlag = false;
     /// <summary>
     /// true の場合、avatar reduction system は receiver ごとの avatar message を bundle し、
@@ -66,13 +163,25 @@ public class Configuration
     public int AvatarBundleMinMessages = 4;
     /// <summary>LZ4 compression を試みる前に必要な uncompressed bundle bytes の最小値。LZ4 は per-call setup がほぼ 0 のため、128 は LZ4 が redundancy を見つけられない極小 case を guard するだけ。</summary>
     public int AvatarBundleMinBytes = 128;
+    /// <summary>
+    /// EnableBSRProfilingを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool EnableBSRProfiling = false;
+    /// <summary>
+    /// DisallowHeadlessを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool DisallowHeadless = false;
 
     // server boot 時に適用する global lockout default。
     // lock 中に load するには、対応する basis.resource.lockbypass.{avatar,prop,world} permission が必要。
     public bool AvatarsLocked = false;
+    /// <summary>
+    /// PropsLockedを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool PropsLocked = false;
+    /// <summary>
+    /// WorldsLockedを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool WorldsLocked = true;
     /// <summary>
     /// true の場合、peer は content share system 経由で saved-server entry を share できない。
@@ -99,22 +208,61 @@ public class Configuration
     /// GlobalGetLockState で client へ broadcast される。
     /// </summary>
     public byte CameraMetadataDisallowMask = 0;
+    /// <summary>
+    /// CrashReportingEnabledを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool CrashReportingEnabled = true;
+    /// <summary>
+    /// MaxMicrophoneRangeMetersを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float MaxMicrophoneRangeMeters = 25f;
+    /// <summary>
+    /// MaxHearingRangeMetersを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float MaxHearingRangeMeters = 25f;
+    /// <summary>
+    /// MinアバターEyeHeightMetersを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float MinAvatarEyeHeightMeters = 0.1f;
+    /// <summary>
+    /// MaxアバターEyeHeightMetersを保持します。型は float で、関連処理から共有される値です。
+    /// </summary>
     public float MaxAvatarEyeHeightMeters = 100f;
+    /// <summary>
+    /// MaxデータベースEntriesを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int MaxDatabaseEntries = 10000;
+    /// <summary>
+    /// MaxデータベースNameLengthを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int MaxDatabaseNameLength = 256;
+    /// <summary>
+    /// MaxデータベースPayloadEntriesを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int MaxDatabasePayloadEntries = 1000;
+    /// <summary>
+    /// MaxContentSpheresPerプレイヤーを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public int MaxContentSpheresPerPlayer = 32;
+    /// <summary>
+    /// PlayspaceMoverLockedを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool PlayspaceMoverLocked = false;
+    /// <summary>
+    /// DirectConnectLockedを保持します。型は bool で、関連処理から共有される値です。
+    /// </summary>
     public bool DirectConnectLocked = false;
 
     // ── REST API ──────────────────────────────────────────────────────────────
     /// <summary>REST management API を有効にするには true にする。</summary>
     public bool ApiEnabled = false;
+    /// <summary>
+    /// ApiHostを保持します。型は string で、関連処理から共有される値です。
+    /// </summary>
     public string ApiHost = "localhost";
+    /// <summary>
+    /// ApiPortを保持します。型は ushort で、関連処理から共有される値です。
+    /// </summary>
     public ushort ApiPort = 10667;
     /// <summary>すべての API request で必要な bearer token。空文字列なら ApiEnabled が true でも API は無効。</summary>
     public string ApiKey = "";
@@ -209,6 +357,9 @@ public class Configuration
         ApplyEnvironmentalOverridesTo(this);
     }
 
+    /// <summary>
+    /// ApplyEnvironmentalOverridesToを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void ApplyEnvironmentalOverridesTo(object target)
     {
         if (target == null) return;

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Basis.Network
 {
+    /// <summary>
+    /// BasisサーバーSideLoggingの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisServerSideLogging
     {
         private static string LogDirectory;
@@ -17,10 +21,19 @@ namespace Basis.Network
         private static readonly BlockingCollection<string> LogQueue = new(new ConcurrentQueue<string>(), 200);
         private static readonly SemaphoreSlim FileWriteSemaphore = new(1, 1);
 
+        /// <summary>
+        /// BasisサーバーSideLoggingを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisServerSideLogging()
         {
         }
+        /// <summary>
+        /// UseLoggingを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool UseLogging;
+        /// <summary>
+        /// WriteToScreenを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool WriteToScreen = true;
         /// <summary>
         /// Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")
@@ -50,6 +63,9 @@ namespace Basis.Network
                 Log("no logs will be saved");
             }
         }
+        /// <summary>
+        /// StartLoggingTaskを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+        /// </summary>
         private static void StartLoggingTask()
         {
             _cancellationTokenSource = new CancellationTokenSource();
@@ -74,6 +90,9 @@ namespace Basis.Network
             }, cancellationToken);
         }
 
+        /// <summary>
+        /// WriteToFileAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static async Task WriteToFileAsync(string logEntry, CancellationToken cancellationToken)
         {
             try
@@ -92,6 +111,9 @@ namespace Basis.Network
             }
         }
 
+        /// <summary>
+        /// ShutdownAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static async Task ShutdownAsync()
         {
             _cancellationTokenSource?.Cancel();
@@ -110,12 +132,18 @@ namespace Basis.Network
                 _cancellationTokenSource?.Dispose();
             }
         }
+        /// <summary>
+        /// Formatメッセージを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string FormatMessage(string level, string message)
         {
             string timestamp = DateTime.Now.ToString("HH:mm");
             return $"[{timestamp}] [{level}] {message}";
         }
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string Sanitize(string message)
         {
             if (string.IsNullOrEmpty(message)) return message;
@@ -129,6 +157,9 @@ namespace Basis.Network
             return sb.ToString();
         }
 
+        /// <summary>
+        /// ログを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void Log(string message)
         {
             if (WriteToScreen || UseLogging)
@@ -149,6 +180,9 @@ namespace Basis.Network
                 }
             }
         }
+        /// <summary>
+        /// ログWarningを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void LogWarning(string message)
         {
             if (WriteToScreen || UseLogging)
@@ -170,6 +204,9 @@ namespace Basis.Network
             }
         }
 
+        /// <summary>
+        /// ログエラーを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void LogError(string message)
         {
             if (WriteToScreen || UseLogging)
@@ -192,6 +229,9 @@ namespace Basis.Network
             }
         }
 
+        /// <summary>
+        /// WriteColoredメッセージを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void WriteColoredMessage(string message, ConsoleColor color)
         {
             var originalColor = Console.ForegroundColor; // 元の色を保存する

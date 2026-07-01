@@ -12,12 +12,19 @@ using System.Collections.Concurrent;
 using static BasisNetworkCore.Serializable.SerializableBasis;
 using static BasisPermissions.PermissionManager;
 
+/// <summary>
+/// BasisネットワークメッセージProcessorの責務をまとめるクラスです。
+/// MessageProcessor領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static class BasisNetworkMessageProcessor
 {
     private const int MaxErrorsBeforeWarning = 50;
     private static readonly ConcurrentDictionary<int, int> _peerErrorCounts = new();
 
     public static void ClearPeerErrors(int peerId) => _peerErrorCounts.TryRemove(peerId, out _);
+    /// <summary>
+    /// Processメッセージを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+    /// </summary>
     public static void ProcessMessage(NetPeer peer, NetPacketReader reader, byte channel, DeliveryMethod deliveryMethod)
     {
         BasisNetworkStatistics.RecordInbound(channel, reader.AvailableBytes);
@@ -69,6 +76,9 @@ public static class BasisNetworkMessageProcessor
         }
     }
 
+    /// <summary>
+    /// 処理Unknownを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+    /// </summary>
     private static void HandleUnknown(NetPeer peer, NetPacketReader reader, byte channel, string kind)
     {
         int errorCount = _peerErrorCounts.AddOrUpdate(peer.Id, 1, (_, c) => c + 1);

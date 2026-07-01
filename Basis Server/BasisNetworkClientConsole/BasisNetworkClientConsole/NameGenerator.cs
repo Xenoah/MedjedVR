@@ -1,9 +1,22 @@
 namespace Basis.Utilities
 {
+    /// <summary>
+    /// NameGeneratorの責務をまとめるクラスです。
+    /// ClientConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class NameGenerator
     {
+        /// <summary>
+        /// adjectivesを保持します。型は string[] で、関連処理から共有される値です。
+        /// </summary>
         public static string[] adjectives = { "Swift", "Brave", "Clever", "Fierce", "Nimble", "Silent", "Bold", "Lucky", "Strong", "Mighty", "Sneaky", "Fearless", "Wise", "Vicious", "Daring" };
+        /// <summary>
+        /// nounsを保持します。型は string[] で、関連処理から共有される値です。
+        /// </summary>
         public static string[] nouns = { "Warrior", "Hunter", "Mage", "Rogue", "Paladin", "Shaman", "Knight", "Archer", "Monk", "Druid", "Assassin", "Sorcerer", "Ranger", "Guardian", "Berserker" };
+        /// <summary>
+        /// titlesを保持します。型は string[] で、関連処理から共有される値です。
+        /// </summary>
         public static string[] titles = { "the Swift", "the Bold", "the Silent", "the Brave", "the Fierce", "the Wise", "the Protector", "the Shadow", "the Flame", "the Phantom" };
         // thread-safe な unique player name generation。
         public static string[] animals = { "Wolf", "Tiger", "Eagle", "Dragon", "Lion", "Bear", "Hawk", "Panther", "Raven", "Serpent", "Fox", "Falcon" };
@@ -24,6 +37,9 @@ namespace Basis.Utilities
             ("Emerald", "#50C878"),
             ("Amber", "#FFBF00")
         };
+        /// <summary>
+        /// GenerateRandomプレイヤーNameを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static string GenerateRandomPlayerName()
         {
             Random random = Random.Shared;

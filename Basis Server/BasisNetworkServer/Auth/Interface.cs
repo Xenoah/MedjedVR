@@ -9,6 +9,10 @@ namespace Basis.Network.Server.Auth
     {
         public bool IsAuthenticated(byte[] BytesMsg);
     }
+    /// <summary>
+    /// I認証識別情報の責務をまとめるインターフェイスです。
+    /// Auth領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public interface IAuthIdentity
     {
         /// <summary>
@@ -21,6 +25,9 @@ namespace Basis.Network.Server.Auth
         public bool NetIDToUUID(NetPeer Peer, out string UUID);
         public bool UUIDToNetID(string UUID, out int Peer);
 
+        /// <summary>
+        /// HasFileSupportを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool HasFileSupport = false;
     }
 }

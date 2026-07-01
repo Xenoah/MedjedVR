@@ -1,4 +1,8 @@
 using Basis.Network.Core;
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -14,7 +18,13 @@ public static partial class SerializableBasis
         /// この Object が network 上で紐づく unique string。
         /// </summary>
         public string LoadedNetID;
+        /// <summary>
+        /// UnlockPasswordを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string UnlockPassword;
+        /// <summary>
+        /// CombinedURLを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string CombinedURL;
 
         // server からこの item を削除しない。
@@ -26,19 +36,52 @@ public static partial class SerializableBasis
         /// </summary>
         public bool IsAdminLocked;
 
+        /// <summary>
+        /// PositionXを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionX;
+        /// <summary>
+        /// PositionYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionY;
+        /// <summary>
+        /// PositionZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionZ;
 
+        /// <summary>
+        /// QuaternionXを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float QuaternionX;
+        /// <summary>
+        /// QuaternionYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float QuaternionY;
+        /// <summary>
+        /// QuaternionZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float QuaternionZ;
+        /// <summary>
+        /// QuaternionWを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float QuaternionW;
 
+        /// <summary>
+        /// ScaleXを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float ScaleX;
+        /// <summary>
+        /// ScaleYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float ScaleY;
+        /// <summary>
+        /// ScaleZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float ScaleZ;
 
+        /// <summary>
+        /// Persistを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool Persist;
         /// <summary>
         /// true の場合、この item は "static" になる。全員の pickup が無効になり、
@@ -63,6 +106,9 @@ public static partial class SerializableBasis
         /// 3 = Predownload (全 client で download して disc に cache し、spawn はしない)。
         /// </summary>
         public byte LoadStrategy;
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader Writer)
         {
             Mode = Writer.GetByte();
@@ -94,6 +140,9 @@ public static partial class SerializableBasis
             }
 
         }
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter Writer)
         {
             Writer.Put(Mode);
@@ -139,11 +188,17 @@ public static partial class SerializableBasis
         /// </summary>
         public bool IsReady;
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(LoadedNetID);
             writer.Put(IsReady);
         }
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             LoadedNetID = reader.GetString();
@@ -161,10 +216,16 @@ public static partial class SerializableBasis
         /// </summary>
         public string LoadedNetID;
 
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter writer)
         {
             writer.Put(LoadedNetID);
         }
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader reader)
         {
             LoadedNetID = reader.GetString();

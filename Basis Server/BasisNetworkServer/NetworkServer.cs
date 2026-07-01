@@ -17,12 +17,31 @@ using System.Net;
 using static Basis.Network.Core.Compression.BasisAvatarBitPacking;
 using static BasisPermissions.PermissionManager;
 
+/// <summary>
+/// ネットワークサーバーの責務をまとめるクラスです。
+/// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static class NetworkServer
 {
+    /// <summary>
+    /// Listenerを保持します。型は EventBasedNetListener で、関連処理から共有される値です。
+    /// </summary>
     public static EventBasedNetListener Listener;
+    /// <summary>
+    /// サーバーを保持します。型は NetManager で、関連処理から共有される値です。
+    /// </summary>
     public static NetManager Server;
+    /// <summary>
+    /// AuthenticatedPeersを保持します。型は ConcurrentDictionary<int, NetPeer> で、関連処理から共有される値です。
+    /// </summary>
     public static ConcurrentDictionary<int, NetPeer> AuthenticatedPeers = new();
+    /// <summary>
+    /// AuthenticatedピアTagを保持します。型は object で、関連処理から共有される値です。
+    /// </summary>
     public static readonly object AuthenticatedPeerTag = new object();
+    /// <summary>
+    /// 設定を保持します。型は Configuration で、関連処理から共有される値です。
+    /// </summary>
     public static Configuration Configuration;
     /// <summary>
     /// <see cref="Configuration.BasisUserRestrictionMode"/> が <c>AllowList</c> のとき、
@@ -30,14 +49,23 @@ public static class NetworkServer
     /// admin-panel からの変更が restart 後も残るよう、config folder 下の BasisAllowList.txt を backing store にする。
     /// </summary>
     public static BasisNetworkServer.Security.BasisAllowList AllowList;
+    /// <summary>
+    /// BanListを保持します。型は BasisNetworkServer.Security.BasisBanList で、関連処理から共有される値です。
+    /// </summary>
     public static BasisNetworkServer.Security.BasisBanList BanList;
     // connect/disconnect 時に再構築する cached snapshot。broadcast ごとの ToArray() allocation を避ける。
     private static volatile NetPeer[] _peerSnapshot = Array.Empty<NetPeer>();
     // read-then-publish を保護する。OnNetworkAccepted は並列 DID-auth continuation 上で走るため、
     // 同時 join により _peerSnapshot が古い array へ lost-update し、peer を落とす可能性がある。
     private static readonly object _peerSnapshotLock = new object();
+    /// <summary>
+    /// ピアSnapshotを保持します。型は NetPeer[] で、関連処理から共有される値です。
+    /// </summary>
     public static NetPeer[] PeerSnapshot => _peerSnapshot;
 
+    /// <summary>
+    /// RebuildピアSnapshotを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void RebuildPeerSnapshot()
     {
         lock (_peerSnapshotLock)
@@ -50,11 +78,17 @@ public static class NetworkServer
     // player 数の spike 後に writer が無制限に溜まらないよう上限を設ける。
     private static readonly ConcurrentQueue<NetDataWriter> _writerPool = new();
     private const int MaxPooledWriters = 64;
+    /// <summary>
+    /// RentWriterを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static NetDataWriter RentWriter(int initialCapacity = 208)
     {
         if (_writerPool.TryDequeue(out var writer)) return writer;
         return new NetDataWriter(true, initialCapacity);
     }
+    /// <summary>
+    /// ReturnWriterを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void ReturnWriter(NetDataWriter writer)
     {
         writer.Reset();
@@ -65,11 +99,23 @@ public static class NetworkServer
         // else: 破棄する。GC に回収させ、pool の上限を維持する
     }
 
+    /// <summary>
+    /// 認証を保持します。型は IAuth で、関連処理から共有される値です。
+    /// </summary>
     public static IAuth Auth;
+    /// <summary>
+    /// 認証識別情報を保持します。型は IAuthIdentity で、関連処理から共有される値です。
+    /// </summary>
     public static IAuthIdentity AuthIdentity;
+    /// <summary>
+    /// HighQualityLengthを保持します。型は int で、関連処理から共有される値です。
+    /// </summary>
     public static int HighQualityLength;
     #region Server Entry Point
 
+    /// <summary>
+    /// Startサーバーを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+    /// </summary>
     public static void StartServer(Configuration configuration)
     {
         StopServer();
@@ -102,6 +148,9 @@ public static class NetworkServer
         BNL.Log("Server Worker Threads Booted");
     }
 
+    /// <summary>
+    /// Stopサーバーを停止します。保持している状態を片付け、次回起動に影響が残らないようにします。
+    /// </summary>
     public static void StopServer()
     {
         if (Server == null) return;
@@ -120,6 +169,9 @@ public static class NetworkServer
         _peerSnapshot = Array.Empty<NetPeer>();
     }
 
+    /// <summary>
+    /// InitializePulseSettingsを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+    /// </summary>
     private static void InitializePulseSettings()
     {
         BasisServerReductionSystemEvents.BSRBaseMultiplier = Configuration.BSRBaseMultiplier;
@@ -135,6 +187,9 @@ public static class NetworkServer
         BNL.Log($"[BSR] AvatarBundleCompression={Configuration.EnableAvatarBundleCompression} (minMsgs={Configuration.AvatarBundleMinMessages}, minBytes={Configuration.AvatarBundleMinBytes})");
     }
 
+    /// <summary>
+    /// Initialize認証を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+    /// </summary>
     private static void InitializeAuth()
     {
         var HasFileSupport = Configuration.HasFileSupport;
@@ -165,6 +220,9 @@ public static class NetworkServer
         }
     }
 
+    /// <summary>
+    /// Subscribeイベントを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void SubscribeEvents(Configuration Configuration)
     {
         BasisServerHandleEvents.SubscribeServerEvents();
@@ -180,6 +238,9 @@ public static class NetworkServer
 
     #region Server Setup
 
+    /// <summary>
+    /// Setupサーバーを設定します。以後のネットワーク処理で参照される状態を更新します。
+    /// </summary>
     public static void SetupServer(Configuration configuration)
     {
         Listener = new EventBasedNetListener();
@@ -189,6 +250,9 @@ public static class NetworkServer
         StartListening(configuration);
     }
 
+    /// <summary>
+    /// StartListeningを開始します。依存する状態を準備して実行ループや待ち受けを有効化します。
+    /// </summary>
     public static void StartListening(Configuration configuration)
     {
         IPAddress ipv4, ipv6;
@@ -217,6 +281,9 @@ public static class NetworkServer
         BNL.Log($"  IPv6 bind: [{ipv6}]");
     }
     #endregion
+    /// <summary>
+    /// BroadcastメッセージToClientsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void BroadcastMessageToClients(NetDataWriter writer, byte channel, NetPeer sender, ReadOnlySpan<NetPeer> clients, DeliveryMethod deliveryMethod = DeliveryMethod.Sequenced, int maxMessages = 70)
     {
         if (!CheckValidated(writer))
@@ -235,6 +302,9 @@ public static class NetworkServer
         }
         BasisNetworkStatistics.RecordOutboundBatch(channel, sent, (long)sent * writer.Length);
     }
+    /// <summary>
+    /// BroadcastメッセージToClientsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void BroadcastMessageToClients(NetDataWriter writer, byte channel, ReadOnlySpan<NetPeer> clients, DeliveryMethod deliveryMethod = DeliveryMethod.Sequenced, int maxMessages = 70)
     {
         if (!CheckValidated(writer))
@@ -253,6 +323,9 @@ public static class NetworkServer
         BasisNetworkStatistics.RecordOutboundBatch(channel, sent, (long)sent * writer.Length);
     }
 
+    /// <summary>
+    /// BroadcastメッセージToClientsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void BroadcastMessageToClients(NetDataWriter writer, byte channel, ref List<NetPeer> clients, DeliveryMethod deliveryMethod = DeliveryMethod.Sequenced, int maxMessages = 70)
     {
         if (!CheckValidated(writer))
@@ -273,6 +346,9 @@ public static class NetworkServer
         BasisNetworkStatistics.RecordOutboundBatch(channel, sent, (long)sent * writer.Length);
     }
 
+    /// <summary>
+    /// TrySendを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+    /// </summary>
     public static void TrySend(NetPeer client, NetDataWriter writer, byte channel, DeliveryMethod deliveryMethod, int maxMessages = 70)
     {
         if (TrySendNoRecord(client, writer, channel, deliveryMethod, maxMessages))
@@ -297,6 +373,9 @@ public static class NetworkServer
         client.Send(writer, channel, deliveryMethod);
         return true;
     }
+    /// <summary>
+    /// CheckValidatedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static bool CheckValidated(NetDataWriter writer)
     {
         if (writer.Length == 0)

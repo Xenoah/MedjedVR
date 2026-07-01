@@ -5,6 +5,10 @@ using System;
 using System.Buffers;
 using static SerializableBasis;
 
+/// <summary>
+/// Basisネットワークサーバーライブラリの責務をまとめるクラスです。
+/// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static class BasisNetworkServerLibrary
 {
     /// <summary>
@@ -22,6 +26,9 @@ public static class BasisNetworkServerLibrary
     private static int _cachedWireLen;
     private static readonly object _cacheLock = new object();
 
+    /// <summary>
+    /// SendライブラリToピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+    /// </summary>
     public static void SendLibraryToPeer(NetPeer peer)
     {
         if (!TryGetCachedWire(out byte[] wire, out int wireLen)) return;
@@ -31,6 +38,9 @@ public static class BasisNetworkServerLibrary
         NetworkServer.ReturnWriter(writer);
     }
 
+    /// <summary>
+    /// BroadcastライブラリToAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     public static void BroadcastLibraryToAll()
     {
         // library が mutate されたため、broadcast 前に cache を rebuild する。
@@ -47,6 +57,9 @@ public static class BasisNetworkServerLibrary
         NetworkServer.ReturnWriter(writer);
     }
 
+    /// <summary>
+    /// TryGetCachedWireを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+    /// </summary>
     private static bool TryGetCachedWire(out byte[] wire, out int wireLen)
     {
         lock (_cacheLock)
@@ -61,6 +74,9 @@ public static class BasisNetworkServerLibrary
         }
     }
 
+    /// <summary>
+    /// RebuildCacheLockedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+    /// </summary>
     private static void RebuildCacheLocked()
     {
         var loaded = BasisDefaultLibraryLoader.LoadedItems;

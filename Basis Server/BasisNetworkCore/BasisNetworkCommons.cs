@@ -1,5 +1,9 @@
 namespace Basis.Network.Core
 {
+    /// <summary>
+    /// BasisネットワークCommonsの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisNetworkCommons
     {
         /// <summary>
@@ -7,8 +11,17 @@ namespace Basis.Network.Core
         /// </summary>
         public const int MaxConnections = ushort.MaxValue;
 
+        /// <summary>
+        /// ネットワークIntervalPollを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int NetworkIntervalPoll = 2;
+        /// <summary>
+        /// PingIntervalを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int PingInterval = 1500;
+        /// <summary>
+        /// ReceivePollingTimeを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int ReceivePollingTime = 50000;
         /// <summary>
         /// LiteNetLib packet pool size。high-throughput send loop 中に新しい NetPacket object を
@@ -55,12 +68,33 @@ namespace Basis.Network.Core
         //   10 = Medium               11 = Medium + Additional
         //   12 = High                 13 = High + Additional
         public const byte PlayerAvatarVeryLowChannel = 6;
+        /// <summary>
+        /// プレイヤーアバターVeryLowAdditionalChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarVeryLowAdditionalChannel = 7;
+        /// <summary>
+        /// プレイヤーアバターLowChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarLowChannel = 8;
+        /// <summary>
+        /// プレイヤーアバターLowAdditionalChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarLowAdditionalChannel = 9;
+        /// <summary>
+        /// プレイヤーアバターMediumChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarMediumChannel = 10;
+        /// <summary>
+        /// プレイヤーアバターMediumAdditionalChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarMediumAdditionalChannel = 11;
+        /// <summary>
+        /// プレイヤーアバターHighChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarHighChannel = 12;
+        /// <summary>
+        /// プレイヤーアバターHighAdditionalChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarHighAdditionalChannel = 13;
 
         // ── avatar management ────────────────────────────────────────────────
@@ -179,12 +213,33 @@ namespace Basis.Network.Core
         //   45 = Medium              46 = Medium + Additional
         //   47 = High                48 = High + Additional
         public const byte PlayerAvatarVeryLowLargeChannel = 41;
+        /// <summary>
+        /// プレイヤーアバターVeryLowAdditionalLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarVeryLowAdditionalLargeChannel = 42;
+        /// <summary>
+        /// プレイヤーアバターLowLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarLowLargeChannel = 43;
+        /// <summary>
+        /// プレイヤーアバターLowAdditionalLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarLowAdditionalLargeChannel = 44;
+        /// <summary>
+        /// プレイヤーアバターMediumLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarMediumLargeChannel = 45;
+        /// <summary>
+        /// プレイヤーアバターMediumAdditionalLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarMediumAdditionalLargeChannel = 46;
+        /// <summary>
+        /// プレイヤーアバターHighLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarHighLargeChannel = 47;
+        /// <summary>
+        /// プレイヤーアバターHighAdditionalLargeChannelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte PlayerAvatarHighAdditionalLargeChannel = 48;
 
         // ── compressed avatar bundle (server → client only) ──────────────────
@@ -212,12 +267,33 @@ namespace Basis.Network.Core
         // BasisP2PSignalMessage body。reliable-ordered。
         public const byte P2PChannel = 54;
 
+        /// <summary>
+        /// P2PSubRequestを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_Request = 0;
+        /// <summary>
+        /// P2PSubAcceptを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_Accept = 1;
+        /// <summary>
+        /// P2PSubDeclineを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_Decline = 2;
+        /// <summary>
+        /// P2PSubCancelを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_Cancel = 3;
+        /// <summary>
+        /// P2PSubLinkLostを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_LinkLost = 4;
+        /// <summary>
+        /// P2PSubサーバーArmedを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_ServerArmed = 5;
+        /// <summary>
+        /// P2PSubLinkUpを保持します。型は byte で、関連処理から共有される値です。
+        /// </summary>
         public const byte P2PSub_LinkUp = 6;
 
         // ── direct-connect custom data (P2P-first, server fallback) ──────────

@@ -5,14 +5,24 @@ using System.Xml.Serialization;
 
 namespace Basis.Network.Core
 {
+    /// <summary>
+    /// BasisTransport設定Storeの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisTransportConfigStore
     {
+        /// <summary>
+        /// TransportsFolderNameを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string TransportsFolderName = "transports";
 
         private static readonly Dictionary<string, object> _configs = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         private static readonly Dictionary<string, Type> _types = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
         private static readonly object _lock = new object();
 
+        /// <summary>
+        /// RegisterTypeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void RegisterType(string stackId, Type configType)
         {
             if (string.IsNullOrEmpty(stackId)) throw new ArgumentException("Stack id is required", nameof(stackId));
@@ -42,6 +52,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// Getを取得します。通信状態や設定値を読み取り専用で参照するための入口です。
+        /// </summary>
         public static object Get(string stackId)
         {
             if (string.IsNullOrEmpty(stackId)) return null;
@@ -64,6 +77,9 @@ namespace Basis.Network.Core
             get { lock (_lock) return new Dictionary<string, Type>(_types); }
         }
 
+        /// <summary>
+        /// 読み込みAllを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void LoadAll(string configBaseDir)
         {
             if (string.IsNullOrEmpty(configBaseDir)) return;
@@ -82,6 +98,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// SaveAllを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void SaveAll(string configBaseDir)
         {
             if (string.IsNullOrEmpty(configBaseDir)) return;
@@ -105,6 +124,9 @@ namespace Basis.Network.Core
             }
         }
 
+        /// <summary>
+        /// 読み込みOrCreateを初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         private static object LoadOrCreate(Type type, string path)
         {
             XmlSerializer serializer = new XmlSerializer(type);
@@ -148,6 +170,9 @@ namespace Basis.Network.Core
             return created;
         }
 
+        /// <summary>
+        /// SaveAtomicを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void SaveAtomic(Type type, object config, string path)
         {
             try

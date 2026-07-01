@@ -3,21 +3,45 @@ using System.Collections.Generic;
 
 namespace Basis.Network.Core
 {
+    /// <summary>
+    /// プレイヤー識別情報の責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class PlayerIdentity
     {
+        /// <summary>
+        /// Uuidを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Uuid;
+        /// <summary>
+        /// Providerを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public string Provider;
+        /// <summary>
+        /// Propertiesを保持します。型は Dictionary<string, string> で、関連処理から共有される値です。
+        /// </summary>
         public Dictionary<string, string> Properties = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Iプレイヤー識別情報Providerの責務をまとめるインターフェイスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public interface IPlayerIdentityProvider
     {
         string ProviderId { get; }
         PlayerIdentity GetOrCreate();
     }
 
+    /// <summary>
+    /// Basisプレイヤー識別情報Registryの責務をまとめるクラスです。
+    /// Core領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisPlayerIdentityRegistry
     {
+        /// <summary>
+        /// DefaultProviderIdを保持します。型は string で、関連処理から共有される値です。
+        /// </summary>
         public const string DefaultProviderId = "did";
 
         private static readonly Dictionary<string, IPlayerIdentityProvider> _providers
@@ -25,6 +49,9 @@ namespace Basis.Network.Core
         private static readonly object _lock = new object();
         private static string _activeProviderId = DefaultProviderId;
 
+        /// <summary>
+        /// Registerを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Register(IPlayerIdentityProvider provider)
         {
             if (provider == null) throw new ArgumentNullException(nameof(provider));
@@ -38,6 +65,9 @@ namespace Basis.Network.Core
             set { lock (_lock) _activeProviderId = string.IsNullOrEmpty(value) ? DefaultProviderId : value; }
         }
 
+        /// <summary>
+        /// ResolveActiveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static PlayerIdentity ResolveActive()
         {
             IPlayerIdentityProvider provider = null;
@@ -49,6 +79,9 @@ namespace Basis.Network.Core
             return provider?.GetOrCreate();
         }
 
+        /// <summary>
+        /// Resolveを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static PlayerIdentity Resolve(string providerId)
         {
             IPlayerIdentityProvider provider = null;
@@ -60,6 +93,9 @@ namespace Basis.Network.Core
             return provider?.GetOrCreate();
         }
 
+        /// <summary>
+        /// IsRegisteredを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static bool IsRegistered(string providerId)
         {
             if (string.IsNullOrEmpty(providerId)) return false;

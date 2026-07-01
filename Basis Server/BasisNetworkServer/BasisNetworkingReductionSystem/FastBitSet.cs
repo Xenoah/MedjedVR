@@ -3,6 +3,10 @@ using System.Threading;
 
 namespace BasisNetworkServer.BasisNetworkingReductionSystem
 {
+    /// <summary>
+    /// Basisサーバー削減Systemイベントの責務をまとめるクラスです。
+    /// ingReductionSystem領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public partial class BasisServerReductionSystemEvents
     {
         /// <summary>
@@ -25,6 +29,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
             /// <summary>resize なしで address できる bit 数。</summary>
             public int Length { get; private set; }
 
+            /// <summary>
+            /// FastBitSetを生成し、利用に必要な初期状態を設定します。
+            /// </summary>
             public FastBitSet(int initialBitCount)
             {
                 if (initialBitCount < 0) throw new ArgumentOutOfRangeException(nameof(initialBitCount));

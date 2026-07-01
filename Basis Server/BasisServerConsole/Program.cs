@@ -6,14 +6,30 @@ using BasisNetworkServer.BasisNetworking;
 using BasisNetworkServer.BasisNetworkingReductionSystem;
 namespace Basis
 {
+    /// <summary>
+    /// Programの責務をまとめるクラスです。
+    /// ServerConsole領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// Checkを保持します。型は BasisNetworkHealthCheck で、関連処理から共有される値です。
+        /// </summary>
         public static BasisNetworkHealthCheck Check;
 #if !UNITY_2017_1_OR_NEWER
+        /// <summary>
+        /// Apiを保持します。型は BasisRestApiHandler で、関連処理から共有される値です。
+        /// </summary>
         public static BasisRestApiHandler Api;
 #endif
+        /// <summary>
+        /// isRunningを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public static bool isRunning = true;
         private static ManualResetEventSlim shutdownEvent = new ManualResetEventSlim(false);
+        /// <summary>
+        /// Mainを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Main(string[] args)
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -110,11 +126,17 @@ namespace Basis
             shutdownEvent.Wait();
         }
 
+        /// <summary>
+        /// CurrentDomainUnhandledExceptionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             BNL.LogError($"Unhandled Exception: {e.ExceptionObject}");
         }
 
+        /// <summary>
+        /// TaskSchedulerUnobservedTaskExceptionを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
             BNL.LogError($"Unobserved Task Exception: {e.Exception.Message}");

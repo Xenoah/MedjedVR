@@ -11,6 +11,9 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
     /// </summary>
     public static class BSRProfiler
     {
+        /// <summary>
+        /// Enabledを保持します。型は volatile bool で、関連処理から共有される値です。
+        /// </summary>
         public static volatile bool Enabled;
 
         private static readonly double MsToTick = Stopwatch.Frequency / 1000.0;
@@ -19,13 +22,28 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
 
         // phase timing (accumulated ticks、print interval ごとに reset)。
         public static long drainTicks;
+        /// <summary>
+        /// processTicksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long processTicks;
+        /// <summary>
+        /// distanceTicksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long distanceTicks;
+        /// <summary>
+        /// updateTicksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long updateTicks;
+        /// <summary>
+        /// triggerTicksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long triggerTicks;
 
         // counter (print interval ごとに reset)。
         public static long tickCount;
+        /// <summary>
+        /// messagesProcessedを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long messagesProcessed;
         // thread-local counter が Parallel.For 後に Interlocked.Add で aggregate できるよう public。
         public static long SendCount;
@@ -35,26 +53,56 @@ namespace BasisNetworkServer.BasisNetworkingReductionSystem
         // compressed-avatar-bundle metrics。reduction system が parallel send loop から
         // Interlocked.Add できるよう public。すべて Enabled が true のときだけ触る。
         public static long bundlesEmitted;
+        /// <summary>
+        /// bundleMessagesを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleMessages;
+        /// <summary>
+        /// bundleRawBytesを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleRawBytes;
+        /// <summary>
+        /// bundleCompressedBytesを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleCompressedBytes;
+        /// <summary>
+        /// bundleDeflateTicksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleDeflateTicks;
+        /// <summary>
+        /// bundleRetriesを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleRetries;
+        /// <summary>
+        /// bundleFallbacksを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleFallbacks;
+        /// <summary>
+        /// bundleTailUncompressedを保持します。型は long で、関連処理から共有される値です。
+        /// </summary>
         public static long bundleTailUncompressed;
 
+        /// <summary>
+        /// IncrementPreSerializationsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void IncrementPreSerializations()
         {
             if (!Enabled) return;
             Interlocked.Increment(ref _preSerializations);
         }
 
+        /// <summary>
+        /// IncrementPreSerializationsSkippedを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void IncrementPreSerializationsSkipped()
         {
             if (!Enabled) return;
             Interlocked.Increment(ref _preSerializationsSkipped);
         }
 
+        /// <summary>
+        /// TryPrintを試行し、失敗時に呼び出し元が分岐できる結果を返します。
+        /// </summary>
         public static void TryPrint()
         {
             if (!Enabled) return;

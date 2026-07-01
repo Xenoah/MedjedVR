@@ -10,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace Basis.Network.Server
 {
+    /// <summary>
+    /// BasisRestApiHandlerの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class BasisRestApiHandler : IDisposable
     {
         private const int MaxConcurrentRequests = 32;
@@ -23,6 +27,9 @@ namespace Basis.Network.Server
         private int _disposed;
         private static readonly byte[] Empty = Array.Empty<byte>();
 
+        /// <summary>
+        /// BasisRestApiHandlerを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public BasisRestApiHandler(Configuration config, IServerControl control = null)
         {
             _apiKey  = config.ApiKey;
@@ -40,6 +47,9 @@ namespace Basis.Network.Server
             BNL.Log($"REST API started at http://{FormatHost(config.ApiHost)}:{config.ApiPort}/api/");
         }
 
+        /// <summary>
+        /// ListenLoopAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private async Task ListenLoopAsync(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
@@ -70,6 +80,9 @@ namespace Basis.Network.Server
             }
         }
 
+        /// <summary>
+        /// 処理Requestを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private void HandleRequest(HttpListenerContext ctx, CancellationToken token)
         {
             try
@@ -106,6 +119,9 @@ namespace Basis.Network.Server
             }
         }
 
+        /// <summary>
+        /// Authenticateを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private bool Authenticate(HttpListenerRequest req)
         {
             if (string.IsNullOrEmpty(_apiKey)) return false;
@@ -115,6 +131,9 @@ namespace Basis.Network.Server
             return CryptographicOperations.FixedTimeEquals(_keyHash, tokenHash);
         }
 
+        /// <summary>
+        /// HashBytesを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static byte[] HashBytes(byte[] data)
         {
             using var sha = SHA256.Create();
@@ -127,6 +146,9 @@ namespace Basis.Network.Server
                 ? $"[{host}]"
                 : host;
 
+        /// <summary>
+        /// Disposeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Dispose()
         {
             if (Interlocked.Exchange(ref _disposed, 1) != 0) return;

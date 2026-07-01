@@ -2,14 +2,28 @@ using System;
 using System.Buffers;
 using Basis.Network.Core;
 
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
+    /// <summary>
+    /// 音声Receiversメッセージの責務をまとめる構造体です。
+    /// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public struct VoiceReceiversMessage
     {
         // data が壊れている場合に巨大 allocation を避けるための hard cap。
         private const int MaxUsers = ushort.MaxValue;
 
+        /// <summary>
+        /// Usersを保持します。型は ushort[] で、関連処理から共有される値です。
+        /// </summary>
         public ushort[] Users;
+        /// <summary>
+        /// UsersLengthを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int UsersLength; // 実際の count。rented array はより大きい場合がある。
 
         /// <param name="largeCount">
@@ -145,6 +159,9 @@ public static partial class SerializableBasis
             UsersLength = 0;
         }
 
+        /// <summary>
+        /// SkipRemainingを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void SkipRemaining(NetDataReader reader)
         {
             if (reader.AvailableBytes > 0)

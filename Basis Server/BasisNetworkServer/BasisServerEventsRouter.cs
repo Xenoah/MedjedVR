@@ -4,8 +4,15 @@ using static SerializableBasis;
 
 namespace BasisNetworkServer
 {
+    /// <summary>
+    /// BasisサーバーイベントRouterの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisServerEventsRouter
     {
+        /// <summary>
+        /// 処理イベントを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         public static void HandleEvent(NetPacketReader reader, NetPeer peer)
         {
             byte eventType = reader.GetByte();
@@ -51,6 +58,9 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// 処理カメラShutterSoundを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleCameraShutterSound(NetPeer peer, byte eventType)
         {
             ushort peerId = (ushort)peer.Id;
@@ -122,6 +132,9 @@ namespace BasisNetworkServer
             NetworkServer.ReturnWriter(writer);
         }
 
+        /// <summary>
+        /// 処理カメラCountdownを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private static void HandleCameraCountdown(NetPacketReader reader, NetPeer peer, byte eventType)
         {
             ClientCameraCountdownMessage clientMsg = new ClientCameraCountdownMessage();

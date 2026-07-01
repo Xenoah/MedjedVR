@@ -14,6 +14,9 @@ namespace BasisNetworkServer.Security
     {
         private static readonly ConcurrentDictionary<string, byte> _allowed = new ConcurrentDictionary<string, byte>();
 
+        /// <summary>
+        /// Countを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public static int Count => _allowed.Count;
 
         /// <summary>

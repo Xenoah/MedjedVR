@@ -9,22 +9,63 @@ using static SerializableBasis;
 
 namespace BasisNetworkServer
 {
+    /// <summary>
+    /// カメラPIP状態の責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public class CameraPIPState
     {
+        /// <summary>
+        /// IsActiveを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool IsActive;
+        /// <summary>
+        /// PositionXを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionX;
+        /// <summary>
+        /// PositionYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionY;
+        /// <summary>
+        /// PositionZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float PositionZ;
+        /// <summary>
+        /// RotationXを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float RotationX;
+        /// <summary>
+        /// RotationYを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float RotationY;
+        /// <summary>
+        /// RotationZを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float RotationZ;
+        /// <summary>
+        /// RotationWを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float RotationW;
+        /// <summary>
+        /// HasNewDataを保持します。型は bool で、関連処理から共有される値です。
+        /// </summary>
         public bool HasNewData;
+        /// <summary>
+        /// LastSentTimesを保持します。型は Dictionary<int, long> で、関連処理から共有される値です。
+        /// </summary>
         public Dictionary<int, long> LastSentTimes = new();
     }
 
+    /// <summary>
+    /// BasisネットワークPIPカメラの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public static class BasisNetworkPIPCamera
     {
+        /// <summary>
+        /// PIPStatesを保持します。型は ConcurrentDictionary<int, CameraPIPState> で、関連処理から共有される値です。
+        /// </summary>
         public static ConcurrentDictionary<int, CameraPIPState> PIPStates = new();
         private static readonly double MsToTick = Stopwatch.Frequency / 1000.0;
 
@@ -246,11 +287,17 @@ namespace BasisNetworkServer
             }
         }
 
+        /// <summary>
+        /// Resetを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void Reset()
         {
             PIPStates.Clear();
         }
 
+        /// <summary>
+        /// DistanceSquaredを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static float DistanceSquared(Basis.Scripts.Networking.Compression.Vector3 a, Basis.Scripts.Networking.Compression.Vector3 b)
         {
             float dx = a.x - b.x;
@@ -259,6 +306,9 @@ namespace BasisNetworkServer
             return dx * dx + dy * dy + dz * dz;
         }
 
+        /// <summary>
+        /// CalculateIntervalFromDistanceSqを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static void CalculateIntervalFromDistanceSq(float distanceSq, out int actualInterval)
         {
             int rawInterval = (int)(BasisServerReductionSystemEvents.BSRSMillisecondDefaultInterval *

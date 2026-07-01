@@ -17,9 +17,18 @@ namespace BasisNetworkServer.Security
         private static float _maxMicrophoneRangeMeters = DefaultMeters;
         private static float _maxHearingRangeMeters = DefaultMeters;
 
+        /// <summary>
+        /// MaxMicrophoneRangeMetersを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float MaxMicrophoneRangeMeters => Interlocked.CompareExchange(ref _maxMicrophoneRangeMeters, 0f, 0f);
+        /// <summary>
+        /// MaxHearingRangeMetersを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public static float MaxHearingRangeMeters => Interlocked.CompareExchange(ref _maxHearingRangeMeters, 0f, 0f);
 
+        /// <summary>
+        /// InitializeFrom設定を初期化します。設定、永続化ファイル、実行時キャッシュを起動時の状態へ整えます。
+        /// </summary>
         public static void InitializeFromConfig(Configuration config)
         {
             Interlocked.Exchange(ref _maxMicrophoneRangeMeters, Sanitize(config.MaxMicrophoneRangeMeters));
@@ -36,6 +45,9 @@ namespace BasisNetworkServer.Security
             return prevMic != mic || prevHearing != hearing;
         }
 
+        /// <summary>
+        /// Send状態Toピアを送信します。対象ピア、チャンネル、配送方式に合わせてパケット化します。
+        /// </summary>
         public static void SendStateToPeer(NetPeer peer)
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -52,6 +64,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Broadcast状態を実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void BroadcastState()
         {
             NetDataWriter writer = NetworkServer.RentWriter();
@@ -72,6 +87,9 @@ namespace BasisNetworkServer.Security
             }
         }
 
+        /// <summary>
+        /// Sanitizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static float Sanitize(float meters)
         {
             return meters <= 0f ? DefaultMeters : meters;

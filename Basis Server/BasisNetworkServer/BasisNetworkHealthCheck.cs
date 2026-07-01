@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Basis.Network.Server
 {
+    /// <summary>
+    /// BasisネットワークHealthCheckの責務をまとめるクラスです。
+    /// Server領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+    /// </summary>
     public sealed class BasisNetworkHealthCheck : IDisposable
     {
         private static readonly byte[] Empty = Array.Empty<byte>();
@@ -23,6 +27,9 @@ namespace Basis.Network.Server
 
         private Task listenTask;
 
+        /// <summary>
+        /// BasisネットワークHealthCheckを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         public BasisNetworkHealthCheck(Configuration config)
         {
             host = config.HealthCheckHost;
@@ -42,6 +49,9 @@ namespace Basis.Network.Server
             BNL.Log($"HTTP health check started at 'http://{FormatHost(host)}:{port}{pathNormalized}'");
         }
 
+        /// <summary>
+        /// NormalizePathを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private static string NormalizePath(string p)
         {
             if (string.IsNullOrWhiteSpace(p)) return "/";
@@ -55,6 +65,9 @@ namespace Basis.Network.Server
             return p;
         }
 
+        /// <summary>
+        /// ListenLoopAsyncを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         private async Task ListenLoopAsync(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
@@ -83,6 +96,9 @@ namespace Basis.Network.Server
             }
         }
 
+        /// <summary>
+        /// 処理Requestを処理します。受信データを検証し、必要な状態更新や再配信を行います。
+        /// </summary>
         private void HandleRequest(HttpListenerContext context)
         {
             try
@@ -174,6 +190,9 @@ namespace Basis.Network.Server
 
         public void Stop() => Dispose();
 
+        /// <summary>
+        /// Disposeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public void Dispose()
         {
             if (cts.IsCancellationRequested) return;

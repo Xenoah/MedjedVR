@@ -29,10 +29,25 @@ namespace Basis.Network.Core.Compression
 
         // 位置/スケール/回転サイズは BasisAvatarBitPacking の定義を再利用する
         public const int WritePosition = BasisAvatarBitPacking.WritePosition;   // 12
+        /// <summary>
+        /// WriteScaleを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteScale    = BasisAvatarBitPacking.WriteScale;      // 2
+        /// <summary>
+        /// WriteRotationを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteRotation = BasisAvatarBitPacking.WriteRotation;   // 7
+        /// <summary>
+        /// WriteHipsDeltaを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteHipsDelta = BasisAvatarBitPacking.WriteHipsDelta; // 6
+        /// <summary>
+        /// WriteHipsRotationを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int WriteHipsRotation = BasisAvatarBitPacking.WriteHipsRotation; // 7
+        /// <summary>
+        /// TailBytesを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public const int TailBytes     = BasisAvatarBitPacking.TailBytes;       // 22
 
         // ────────────────────────────────────────────────────────────
@@ -68,6 +83,9 @@ namespace Basis.Network.Core.Compression
         /// </summary>
         public static readonly int[] BONE_TO_SLOT;
 
+        /// <summary>
+        /// BasisBoneRotationCompressionを生成し、利用に必要な初期状態を設定します。
+        /// </summary>
         static BasisBoneRotationCompression()
         {
             BONE_TO_SLOT = new int[55];
@@ -232,11 +250,17 @@ namespace Basis.Network.Core.Compression
             return (totalBits + 7) >> 3;
         }
 
+        /// <summary>
+        /// ConvertToSizeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static int ConvertToSize(BasisAvatarBitPacking.BitQuality q)
         {
             return WritePosition + RotationBytes(q) + TailBytes;
         }
 
+        /// <summary>
+        /// ComputeBitOffsetsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static int ComputeBitOffsets(byte[] bpc, int[] outBitOffsets)
         {
             int pos = 0;
@@ -258,6 +282,9 @@ namespace Basis.Network.Core.Compression
         /// [-maxRange, maxRange] に量子化する。全範囲の関節では InvSqrt2 を使う。
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// EncodeSmallestThreeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static ulong EncodeSmallestThree(float qx, float qy, float qz, float qw, int bpc, float maxRange = InvSqrt2)
         {
             float ax = Math.Abs(qx), ay = Math.Abs(qy), az = Math.Abs(qz), aw = Math.Abs(qw);
@@ -305,6 +332,9 @@ namespace Basis.Network.Core.Compression
         /// maxRange はエンコード時に使った値と一致している必要がある。
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// DecodeSmallestThreeを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void DecodeSmallestThree(ulong packed, int bpc, out float qx, out float qy, out float qz, out float qw, float maxRange = InvSqrt2)
         {
             uint mask = (uint)((1 << bpc) - 1);
@@ -347,6 +377,9 @@ namespace Basis.Network.Core.Compression
         // ────────────────────────────────────────────────────────────
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// WriteBitsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static void WriteBits(byte[] dst, int bitPos, ulong value, int bitCount)
         {
             int bytePos = bitPos >> 3;
@@ -369,6 +402,9 @@ namespace Basis.Network.Core.Compression
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// ReadBitsを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         public static ulong ReadBits(byte[] src, ref int bitPos, int bitCount)
         {
             int bytePos = bitPos >> 3;
@@ -395,6 +431,9 @@ namespace Basis.Network.Core.Compression
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// Clampを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static uint Clamp(uint v, uint min, uint max)
         {
             if (v < min) return min;
@@ -403,6 +442,9 @@ namespace Basis.Network.Core.Compression
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        /// <summary>
+        /// ClampFを実行します。呼び出し元から渡された情報を基に、この型が担当する処理を進めます。
+        /// </summary>
         static float ClampF(float v, float min, float max)
         {
             if (v < min) return min;

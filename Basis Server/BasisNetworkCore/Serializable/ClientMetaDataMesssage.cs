@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Basis.Network.Core;
+/// <summary>
+/// SerializableBasisの責務をまとめるクラスです。
+/// Serializable領域で使われる状態、通信処理、またはデータ表現を一か所に集約します。
+/// </summary>
 public static partial class SerializableBasis
 {
     /// <summary>
@@ -9,15 +13,36 @@ public static partial class SerializableBasis
     /// </summary>
     public struct ServerMetaDataMessage
     {
+        /// <summary>
+        /// クライアントMetaDataメッセージを保持します。型は ClientMetaDataMessage で、関連処理から共有される値です。
+        /// </summary>
         public ClientMetaDataMessage ClientMetaDataMessage;
 
+        /// <summary>
+        /// 同期Intervalを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int SyncInterval;
+        /// <summary>
+        /// BaseMultiplierを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int BaseMultiplier;
+        /// <summary>
+        /// IncreaseRateを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float IncreaseRate;
+        /// <summary>
+        /// SlowestSendRateを保持します。型は float で、関連処理から共有される値です。
+        /// </summary>
         public float SlowestSendRate;
+        /// <summary>
+        /// ピアLimitを保持します。型は int で、関連処理から共有される値です。
+        /// </summary>
         public int PeerLimit;
         // この player が持つ permission を client へ含めたい。
         public byte[] PermissionsBitset;     // fast, fixed — known nodes as bits
+        /// <summary>
+        /// ExtraPermissionsを保持します。型は string[] で、関連処理から共有される値です。
+        /// </summary>
         public string[] ExtraPermissions;    // dynamic fallback — compressed on the wire
 
         /// <summary>
@@ -38,6 +63,9 @@ public static partial class SerializableBasis
             return PermissionBitsetMap.Decode(PermissionsBitset, ExtraPermissions);
         }
 
+        /// <summary>
+        /// Deserializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Deserialize(NetDataReader Writer)
         {
             ClientMetaDataMessage.Deserialize(Writer);
@@ -70,6 +98,9 @@ public static partial class SerializableBasis
                 ExtraPermissions = Array.Empty<string>();
             }
         }
+        /// <summary>
+        /// Serializeを行います。ネットワーク上の wire format とメモリ上の構造体を相互変換します。
+        /// </summary>
         public void Serialize(NetDataWriter Writer)
         {
             ClientMetaDataMessage.Serialize(Writer);
